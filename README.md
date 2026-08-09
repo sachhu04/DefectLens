@@ -1,5 +1,7 @@
 # Efficient ViT-Based Anomaly Detection with Multi-Criteria Token Fusion (MCTF)
 
+*This is the project associated with the course Computer Vision.*
+
 ## 1. Project Overview
 This project is an industrial visual anomaly detection system designed to detect defects in manufactured products (like MVTec AD dataset categories). It uses a **Vision Transformer (ViT)** backbone with PatchCore-style anomaly detection, enhanced by **Multi-Criteria Token Fusion (MCTF)** to achieve substantially faster inference and reduced FLOPs while preserving critical fine-grained defect information.
 
