@@ -1,0 +1,9 @@
+model_name: "deit_small_patch16_224"
+pretrained: true
+image_size: 224
+layer_idx: -2 # Extract features from penultimate layer
+mctf:
+  enabled: false
+anomaly_detector:
+  coreset_sampling_ratio: 0.1
+  num_neighbors: 9

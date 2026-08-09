@@ -1,0 +1,17 @@
+torch>=2.0.0
+torchvision
+timm
+numpy
+opencv-python
+matplotlib
+scikit-learn
+faiss-cpu
+tqdm
+pyyaml
+fastapi
+uvicorn
+pydantic
+python-multipart
+fvcore
+thop
+requests

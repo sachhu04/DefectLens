@@ -1,0 +1,17 @@
+model_name: "deit_small_patch16_224"
+pretrained: true
+image_size: 224
+layer_idx: -2
+mctf:
+  enabled: true
+  reduction_ratio: 0.2
+  temperature_sim: 1.0
+  temperature_info: 1.0
+  temperature_size: 1.0
+  use_sim: true
+  use_info: true
+  use_size: true
+  layers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] # applied before these blocks
+anomaly_detector:
+  coreset_sampling_ratio: 0.1
+  num_neighbors: 9
