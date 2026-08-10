@@ -5,9 +5,6 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.models.vit import ViTFeatureExtractor
 from src.models.anomaly_detector import PatchCoreAnomalyDetector
 from src.data.dataset import MVTecDataset, get_transforms
