@@ -28,7 +28,7 @@ env/
 .env
 
 # Data & Models
-data/
+/data/
 artifacts/
 outputs/
 results/
@@ -50,3 +50,6 @@ frontend/.env*
 .idea/
 .vscode/
 *.swp
+
+# direnv cache
+.direnv/
