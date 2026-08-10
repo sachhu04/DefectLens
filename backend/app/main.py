@@ -10,10 +10,6 @@ from PIL import Image
 import torch
 import numpy as np
 
-import sys
-# Add project root to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-
 from src.models.vit import ViTFeatureExtractor
 from src.models.anomaly_detector import PatchCoreAnomalyDetector
 from src.data.dataset import get_transforms
@@ -156,4 +152,4 @@ async def predict(
         raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("backend.app.main:app", host="0.0.0.0", port=8000, reload=True)

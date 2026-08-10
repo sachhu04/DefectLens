@@ -7,9 +7,6 @@ import json
 from PIL import Image
 import numpy as np
 
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.models.vit import ViTFeatureExtractor
 from src.models.anomaly_detector import PatchCoreAnomalyDetector
 from src.data.dataset import get_transforms
