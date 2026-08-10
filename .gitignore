@@ -28,7 +28,7 @@ env/
 .env
 
 # Data & Models
-data/
+/data/
 artifacts/
 outputs/
 results/

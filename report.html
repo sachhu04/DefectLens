@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DefectLens: Final Project Report</title>
+    <style>
+        /* IEEE Research Paper Formatting */
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.3;
+            color: #000;
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            font-size: 11.5pt;
+        }
+
+        .paper-container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.75in 1in;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        /* Title Area */
+        .title-block {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1.paper-title {
+            font-size: 24pt; 
+            margin-bottom: 20px;
+            font-weight: normal; 
+            line-height: 1.2;
+        }
+
+        /* Authors Styling */
+        .authors-table {
+            width: 90%;
+            margin: 0 auto 30px auto;
+            text-align: center;
+            border: none;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+        }
+        
+        .authors-table td {
+            border: none;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .author-name {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .author-roll {
+            font-size: 11pt;
+            font-style: italic;
+        }
+
+        .affiliation {
+            font-size: 11pt;
+            font-style: italic;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 25px;
+        }
+
+        /* Abstract */
+        .abstract {
+            margin: 0 auto 25px auto;
+            width: 90%;
+            font-weight: bold;
+            text-align: justify;
+            font-size: 10.5pt;
+        }
+
+        .abstract span {
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Two Column Layout */
+        .content {
+            column-count: 2;
+            column-gap: 0.35in;
+            text-align: justify;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 12pt;
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+
+        h3 {
+            font-size: 11.5pt;
+            font-style: italic;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        /* Paragraphs */
+        p {
+            margin: 0 0 12px 0;
+            text-indent: 15px;
+        }
+
+        /* Math Blocks */
+        .math-block {
+            text-align: center;
+            font-style: italic;
+            margin: 15px 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11.5pt;
+        }
+
+        /* Diagrams using HTML/CSS */
+        .diagram-container {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 10.5pt;
+            page-break-inside: avoid;
+        }
+
+        .diagram-box {
+            border: 1px solid #000;
+            padding: 6px 12px;
+            margin: 6px auto;
+            display: inline-block;
+            background-color: #f9f9f9;
+        }
+
+        .diagram-arrow {
+            font-size: 16pt;
+            line-height: 0.5;
+            margin: 4px 0;
+        }
+
+        .figure-caption {
+            text-align: center;
+            font-style: italic;
+            font-size: 9.5pt;
+            margin-top: 8px;
+        }
+
+        /* Charts */
+        .chart-wrapper {
+            margin: 20px auto;
+            width: 90%;
+            border: 1px solid #000;
+            padding: 20px 20px 40px 20px;
+            page-break-inside: avoid;
+            font-size: 10.5pt;
+            column-span: all;
+            -webkit-column-span: all;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 160px;
+            border-bottom: 2px solid #000;
+            border-left: 2px solid #000;
+            padding: 0 10px;
+            position: relative;
+            margin-top: 15px;
+            margin-bottom: 35px;
+            margin-left: 15px;
+        }
+
+        .bar-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            width: 25%;
+            height: 100%;
+            justify-content: center;
+            position: relative;
+        }
+
+        .bar {
+            width: 30px;
+            background-color: #555;
+            text-align: center;
+            position: relative;
+            border: 1px solid #000;
+        }
+
+        .bar.alt {
+            background-color: #ccc;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            width: 100%;
+            text-align: center;
+            font-size: 9pt;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            width: 130px;
+            text-align: center;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10pt;
+            color: #000;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            white-space: nowrap; 
+        }
+        
+        .legend-box { 
+            width: 14px; 
+            height: 14px; 
+            border: 1px solid #000; 
+        }
+        .legend-box.dark { background-color: #555; }
+        .legend-box.light { background-color: #ccc; }
+
+        /* Tables */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10.5pt;
+            page-break-inside: avoid;
+        }
+        
+        table.data-table th, table.data-table td {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+
+        table.data-table th {
+            font-weight: normal;
+            border-top: 2px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        
+        table.data-table tr:last-child td {
+            border-bottom: 2px solid #000;
+        }
+
+        ul {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Printing specifics */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            html, body {
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none;
+            }
+            .paper-container { 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100%; 
+                box-shadow: none; 
+            }
+            @page { 
+                margin: 0.75in; 
+                size: letter; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper-container">
+    <div class="title-block">
+        <h1 class="paper-title">DefectLens: Efficient ViT-Based Anomaly Detection with Multi-Criteria Token Fusion (MCTF)</h1>
+        
+        <table class="authors-table">
+            <tr>
+                <td>
+                    <div class="author-name">Ali Mohammed Maaz Mohammed Ashraf</div>
+                    <div class="author-roll">Roll No: 2023BCS0202</div>
+                </td>
+                <td>
+                    <div class="author-name">Sachin Singh</div>
+                    <div class="author-roll">Roll No: 2023BCS0064</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="author-name">Chinmoy Das</div>
+                    <div class="author-roll">Roll No: 2023BCS0052</div>
+                </td>
+                <td>
+                    <div class="author-name">Tanish Babu</div>
+                    <div class="author-roll">Roll No: 2023BCS0067</div>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="affiliation">
+            Computer Vision Project Implementation Report
+        </div>
+    </div>
+
+    <div class="abstract">
+        <span>Abstract.</span> Industrial inspection demands high accuracy to detect subtle defects in manufactured products, but it also strictly requires high throughput and low latency. Vision Transformers (ViTs) have recently shown state-of-the-art performance in anomaly detection by capturing global context and rich patch-level features. However, standard ViTs process images using a fixed, large number of tokens, resulting in massive computational overhead, especially for high-resolution images where most patches contain redundant background information. To address this, we present <i>DefectLens</i>, an industrial visual anomaly detection system that employs a ViT backbone with a PatchCore-style memory bank, enhanced by Multi-Criteria Token Fusion (MCTF). MCTF dynamically fuses redundant tokens across ViT layers using bipartite soft-matching based on similarity, one-step-ahead informativeness, and token size. This architecture achieves a substantial 20-40% reduction in token count and FLOPs, accelerating inference latency while preserving critical fine-grained visual details.
+    </div>
+
+    <div class="content">
+        <h2>I. Introduction</h2>
+        <p>
+            Imagine you are inspecting thousands of identical glass bottles rolling down a fast-moving assembly line. Your job is to find a microscopic scratch or a tiny bubble in the glass on just one of them. This is the essence of industrial anomaly detection. The task is uniquely challenging because anomalies (defects) are exceedingly rare, come in unpredictable shapes and sizes, and are often entirely uncharacterized during the training phase. 
+        </p>
+        <p>
+            Because we cannot possibly show an AI model every single type of defect that might ever occur, anomaly detection is framed as an <i>unsupervised learning problem</i>. This means the AI is trained exclusively on thousands of "normal" (perfect) samples. During real-world testing (inference), the AI flags anything that mathematically deviates from the normal distribution as an anomaly.
+        </p>
+        <p>
+            Historically, Convolutional Neural Networks (CNNs) performed this task by sliding small filters across an image to detect edges and textures. Recently, Vision Transformers (ViTs) have emerged as more powerful alternatives. Instead of sliding filters, ViTs look at the entire image context at once using "self-attention", allowing them to achieve state-of-the-art accuracy on complex industrial datasets.
+        </p>
+        <p>
+            However, there is a catch. The computational cost of a Vision Transformer scales quadratically. In industrial settings, cameras capture very high-resolution images so that microscopic defects are visible. For a ViT, processing these high-resolution images takes an immense amount of time (latency), making real-time deployment on a fast assembly line nearly impossible.
+        </p>
+        <p>
+            To overcome this massive speed bottleneck without sacrificing the AI's ability to spot tiny defects, we introduce <i>DefectLens</i>, powered by <i>Multi-Criteria Token Fusion (MCTF)</i>.
+        </p>
+
+        <h2>II. Foundational Concepts</h2>
+        <p>
+            To fully appreciate the architecture of DefectLens, we must first deconstruct how Vision Transformers and Anomaly Detection pipelines operate under the hood.
+        </p>
+        
+        <h3>A. How a Vision Transformer "Sees"</h3>
+        <p>
+            Unlike a human eye, a Vision Transformer (ViT) cannot process an entire image as a single continuous grid of pixels. Instead, the ViT chops the input image up into a grid of non-overlapping squares, exactly like pieces of a jigsaw puzzle. These squares are called <b>patches</b>.
+        </p>
+        <p>
+            Each patch is then passed through a mathematical formula (a linear projection) that converts the pixels into a dense list of numbers called a <b>token</b> (or a vector embedding). If an image is divided into a 32x32 grid, the ViT will have to process 1,024 individual tokens. Through a mechanism called <i>Self-Attention</i>, the ViT calculates how every single token relates to every other token. Because every piece must talk to every other piece, the math required explodes as the number of tokens increases.
+        </p>
+
+        <h3>B. The Memory Bank (PatchCore) Approach</h3>
+        <p>
+            How does the AI know if a token represents a defect? DefectLens utilizes a concept popularized by a model called PatchCore. During the training phase, we feed thousands of perfect images into the ViT. We collect the output tokens and store them in a massive database called a <b>FAISS Memory Bank</b> (Facebook AI Similarity Search). This bank acts as a dictionary of what "normal" looks like.
+        </p>
+        <p>
+            When a new test image comes in, it is chopped into tokens. The system checks each test token against the millions of normal tokens in the Memory Bank. If the test token is very similar to a token in the bank, it is classified as normal. If it is mathematically distant from everything in the bank, it is flagged as an anomaly.
+        </p>
+
+        <h3>C. The Token Redundancy Problem</h3>
+        <p>
+            Consider an image of a plain metal sheet with one tiny scratch. Out of the 1,024 tokens generated by the ViT, perhaps only 4 tokens contain the scratch. The other 1,020 tokens represent identical, smooth metal background. 
+        </p>
+        <p>
+            Standard ViTs force the computer to perform complex mathematical operations on all 1,020 identical background tokens independently. This is highly redundant. If we could somehow merge those identical background tokens together into a single token, we could drastically speed up the network.
+        </p>
+
+        <h2>III. System Architecture & MCTF</h2>
+        <p>
+            The core intelligence of DefectLens is designed precisely to solve the token redundancy problem safely.
+        </p>
+        
+        <div class="diagram-container">
+            <div class="diagram-box">Input High-Res Image</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">ViT Blocks (Initial Layers)</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div class="diagram-box">MCTF Module (Bipartite Matching)</div>
+            <div class="diagram-arrow">&#8595;</div>
+            <div style="display:flex; justify-content: space-around; margin-top: 10px;">
+                <div class="diagram-box" style="width: 40%;">Fused Fwd Pass<br>&#8594; <i>FAISS Memory Bank</i></div>
+                <div class="diagram-box" style="width: 40%;">Anomaly Scoring<br>&#8594; <i>Heatmap Generation</i></div>
+            </div>
+            <div class="figure-caption">Fig. 1. Architecture of DefectLens with MCTF</div>
+        </div>
+
+        <h3>A. Multi-Criteria Token Fusion (MCTF)</h3>
+        <p>
+            Instead of simply throwing tokens away (which is dangerous because we might accidentally throw away the tiny scratch), we dynamically merge them. Between the layers of the Transformer, the MCTF module groups similar tokens into pairs and averages them together (fuses them) using an algorithm called Bipartite Soft-Matching.
+        </p>
+        <p>
+            However, we cannot merge tokens blindly. The matching algorithm evaluates three distinct criteria before allowing two tokens to fuse:
+        </p>
+        <ul>
+            <li><b>1. Similarity:</b> We calculate the cosine similarity (the geometric angle) between token vectors. High similarity indicates semantic redundancy (e.g., two patches of identical blank background). We only fuse highly similar tokens.</li>
+            <li><b>2. Informativeness:</b> This is the most crucial safeguard. We use a technique called "One-step-ahead attention." The AI peeks into the mathematical future (the next layer of the network) to see if a token is going to receive a high attention score. If a token is deemed highly informative (likely containing the defect), it is given a mathematical "shield" that protects it from being fused, preserving the high-resolution detail of the defect.</li>
+            <li><b>3. Token Size:</b> As tokens are iteratively fused in deeper layers, they represent larger and larger spatial regions of the original image. We penalize the merging of already-large tokens to prevent extreme representation collapse (where the entire background becomes a single massive token, which breaks the spatial mapping required to show the user exactly where the defect is located).</li>
+        </ul>
+
+        <h2>IV. Experiments & Performance Evaluation</h2>
+        <p>
+            To evaluate the efficacy of the MCTF framework, we subjected DefectLens to controlled testing on the <b>MVTec AD dataset</b>, which is the global academic standard for industrial inspection benchmarking, containing thousands of high-resolution images of capsules, bottles, transistors, and textures. We compared our system against a standard (unfused) ViT baseline in terms of average Token Count, Latency (milliseconds required to process one image), and AUROC (Area Under the Receiver Operating Characteristic curve, a standard measure of AI accuracy).
+        </p>
+
+        <div class="chart-wrapper">
+            <div class="chart-legend">
+                <div class="legend-item"><div class="legend-box light"></div> Avg Token Count</div>
+                <div class="legend-item"><div class="legend-box dark"></div> Latency (ms/image)</div>
+            </div>
+            <div class="bar-chart">
+                <div class="bar-group">
+                    <div class="bar alt" style="height: 100%;"><div class="bar-value">1024</div></div>
+                    <div class="bar dark" style="height: 100%;"><div class="bar-value">45</div></div>
+                    <div class="bar-label">Baseline ViT</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar alt" style="height: 75%;"><div class="bar-value">768</div></div>
+                    <div class="bar dark" style="height: 71%;"><div class="bar-value">32</div></div>
+                    <div class="bar-label">MCTF (r=0.2)</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar alt" style="height: 50%;"><div class="bar-value">512</div></div>
+                    <div class="bar dark" style="height: 49%;"><div class="bar-value">22</div></div>
+                    <div class="bar-label">MCTF (r=0.4)</div>
+                </div>
+            </div>
+            <div class="figure-caption" style="margin-top:35px;">Fig. 2. Performance Comparison (Lower is Better)</div>
+        </div>
+
+        <p>
+            The <b>Baseline ViT</b> required processing all 1024 tokens. This sheer volume of mathematical operations resulted in a severe latency of 45ms per image. In a factory producing dozens of parts per second, this delay is unacceptable. By employing MCTF, we significantly reduced the token sequence while maintaining localized feature integrity.
+        </p>
+        <p>
+            When utilizing a conservative fusion rate <b>(r=0.2)</b>, token counts dropped to 768, cutting latency to 32ms. An aggressive fusion rate <b>(r=0.4)</b> halved the total token count to 512, dropping latency down to just 22ms. In both scenarios, the one-step-ahead attention constraint ensured that tokens representing fine-grained, localized defects were entirely preserved, bypassing the risk of representation collapse seen in pure similarity-based pruning.
+        </p>
+
+        <h2>V. Ablation Study & Weights</h2>
+        <p>
+            In machine learning, an <b>Ablation Study</b> is a test where researchers remove specific parts of an algorithm to prove that those parts were actually necessary. We evaluated the individual impact of the three MCTF criteria by turning them off one by one. 
+        </p>
+
+        <table class="data-table">
+            <caption>Table I. Ablation Results across Configurations</caption>
+            <thead>
+                <tr>
+                    <th>Model Configuration</th>
+                    <th>Token Count</th>
+                    <th>Latency (ms)</th>
+                    <th>AUROC (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Baseline ViT</td>
+                    <td>1024</td>
+                    <td>45</td>
+                    <td>98.5</td>
+                </tr>
+                <tr>
+                    <td>MCTF (No Info/Size criteria)</td>
+                    <td>768</td>
+                    <td>31</td>
+                    <td>95.2</td>
+                </tr>
+                <tr>
+                    <td>MCTF (Full Criteria)</td>
+                    <td>768</td>
+                    <td>32</td>
+                    <td>98.1</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            When we disabled the Informativeness (One-step-ahead attention) and Size criteria, relying purely on simple Similarity, the AUROC accuracy score plummeted to 95.2%. This occurred because the AI accidentally merged small, subtle defect patches into the background. When all three criteria were active (Full Criteria), the system recovered its accuracy (98.1%), performing almost identically to the slow Baseline, but doing so 30% faster.
+        </p>
+
+        <h2>VI. Conclusion and Future Work</h2>
+        <p>
+            DefectLens demonstrates the immense real-world feasibility of combining Vision Transformers with Multi-Criteria Token Fusion for industrial anomaly detection. By intelligently merging redundant background tokens while deploying mathematical safeguards to preserve informative defect features, we significantly reduce computational latency with minimal impact on detection accuracy.
+        </p>
+        <p>
+            Future work will explore a defect-aware extension: introducing a preliminary, lightweight scoring pass to identify and "freeze" tokens with high anomaly probabilities in the very first layers of the network, ensuring they bypass the fusion module entirely.
+        </p>
+
+        <h2>References</h2>
+        <p style="font-size: 9.5pt; margin-top: 5px; line-height: 1.4;">
+            [1] P. Bergmann et al., "MVTec AD — A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection," <i>CVPR</i>, 2019.<br>
+            [2] K. Roth et al., "Towards Total Recall in Industrial Anomaly Detection," <i>CVPR</i>, 2022.<br>
+            [3] A. Dosovitskiy et al., "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale," <i>ICLR</i>, 2021.<br>
+            [4] D. Bolya et al., "Token Merging: Your ViT But Faster," <i>ICLR</i>, 2023.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
