@@ -45,9 +45,15 @@ cd DefectLens
 # Install Python requirements
 pip install -r requirements.txt
 
+# Install the project itself (editable), so `import src.*` / `backend.*` resolve
+pip install -e .
+
 # Install Frontend requirements
 cd frontend
 npm install
+
+# Optional: auto-load this environment on `cd` (requires direnv; NixOS/macOS/WSL)
+direnv allow
 ```
 
 ## 10. Dataset Setup
