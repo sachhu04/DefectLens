@@ -46,7 +46,7 @@ def main():
     detector.load(mb_path)
 
     layer_idx = config.get('layer_idx', -2)
-    grid_size = config.get('image_size', 224) // 16
+    grid_size = config.get('image_size', 224) // model.patch_size
 
     img_scores = []
     img_labels = []
@@ -84,7 +84,11 @@ def main():
             pixel_scores.append(amap_upsampled.flatten())
             pixel_labels.append(masks.flatten())
             
-    img_roc_auc = roc_auc_score(img_labels, img_scores)
+    if len(set(img_labels)) > 1:
+        img_roc_auc = roc_auc_score(img_labels, img_scores)
+    else:
+        img_roc_auc = 0.0
+        print("Warning: only one class present in test set; image AUROC undefined.")
     
     pixel_scores = np.concatenate(pixel_scores)
     pixel_labels = np.concatenate(pixel_labels)
@@ -97,7 +101,9 @@ def main():
     else:
         pixel_roc_auc = 0.0
         
-    avg_latency = np.mean(latencies[1:]) # Skip first iteration for warmup
+    # Skip first iteration for warmup; fall back to all samples if only one
+    timed = latencies[1:] if len(latencies) > 1 else latencies
+    avg_latency = float(np.mean(timed)) if timed else 0.0
 
     orig_tokens = model.num_patches
     reduced_tokens = feat.shape[1]

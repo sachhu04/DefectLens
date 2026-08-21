@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 import os
+import time
 import yaml
 import tempfile
 import base64
@@ -19,7 +20,12 @@ app = FastAPI(title="Efficient ViT Anomaly Detection API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:4173",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -88,10 +94,8 @@ def get_model_info():
         "description": "Baseline is standard ViT. MCTF applies Multi-Criteria Token Fusion."
     }
 
-import time
-
 @app.post("/predict")
-async def predict(
+def predict(
     file: UploadFile = File(...),
     category: str = Form("bottle"),
     model_type: str = Form("mctf")
@@ -102,6 +106,8 @@ async def predict(
         model = get_model(model_type, device)
         detector = get_detector(model_type, category)
         config = load_config(model_type)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
@@ -114,7 +120,7 @@ async def predict(
         img_np = np.array(img_pil.resize((img_size, img_size), Image.Resampling.BICUBIC))
         
         layer_idx = config.get('layer_idx', -2)
-        grid_size = img_size // 16
+        grid_size = img_size // model.patch_size
         
         start_time = time.perf_counter()
         with torch.no_grad():
@@ -124,7 +130,8 @@ async def predict(
         
         inference_ms = (end_time - start_time) * 1000
         image_score_val = float(image_score.item())
-        prediction_label = "anomalous" if image_score_val > 25.0 else "normal" # Adjusted for real dataset
+        threshold = config['anomaly_detector'].get('threshold', 25.0)
+        prediction_label = "anomalous" if image_score_val > threshold else "normal"
         
         orig_tokens = model.num_patches
         reduced_tokens = feat.shape[1]

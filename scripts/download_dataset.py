@@ -21,7 +21,7 @@ def download_and_extract(url, save_path, extract_path):
     print(f"Extracting {save_path}...")
     try:
         with tarfile.open(save_path) as tar:
-            tar.extractall(path=extract_path)
+            tar.extractall(path=extract_path, filter='data')
     except Exception as e:
         print(f"Failed to extract: {e}")
         return False

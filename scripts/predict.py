@@ -52,7 +52,8 @@ def main():
     img_tensor = transform(img_pil).unsqueeze(0).to(device)
 
     layer_idx = config.get('layer_idx', -2)
-    grid_size = config.get('image_size', 224) // 16 # Assuming patch16
+    grid_size = config.get('image_size', 224) // model.patch_size
+    threshold = config['anomaly_detector'].get('threshold', 25.0)
 
     # Inference timing
     start_time = time.perf_counter()
@@ -65,7 +66,7 @@ def main():
     inference_ms = (end_time - start_time) * 1000
 
     image_score_val = image_score.item()
-    prediction_label = "ANOMALOUS" if image_score_val > 25.0 else "NORMAL" # Adjusted for real dataset
+    prediction_label = "ANOMALOUS" if image_score_val > threshold else "NORMAL"
 
     # Calculate token statistics
     orig_tokens = model.num_patches

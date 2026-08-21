@@ -1,10 +1,14 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
 import os
 import json
-HAS_FAISS = False
+
+try:
+    import faiss
+    HAS_FAISS = True
+except ImportError:
+    HAS_FAISS = False
+
 from sklearn.neighbors import NearestNeighbors
 
 class PatchCoreAnomalyDetector:

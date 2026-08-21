@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Camera, Activity, BarChart2, Zap, Settings, Play, Image as ImageIcon, Upload } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 
 function App() {
   const [activeTab, setActiveTab] = useState('inspection');
@@ -27,7 +27,10 @@ function App() {
     if (e.target.files && e.target.files[0]) {
       const f = e.target.files[0];
       setFile(f);
-      setPreview(URL.createObjectURL(f));
+      setPreview(prev => {
+        if (prev) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(f);
+      });
       setResult(null);
     }
   };
@@ -176,25 +179,25 @@ function App() {
                     <div className="flex flex-col gap-3 group">
                       <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Original</span>
                       <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img src={`data:image/png;base64,${result.images.original}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        <img alt="Original" src={`data:image/png;base64,${result.images.original}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
                       </div>
                     </div>
                     <div className="flex flex-col gap-3 group">
                       <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Heatmap</span>
                       <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img src={`data:image/png;base64,${result.images.heatmap}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        <img alt="Heatmap" src={`data:image/png;base64,${result.images.heatmap}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
                       </div>
                     </div>
                     <div className="flex flex-col gap-3 group">
                       <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Overlay</span>
                       <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img src={`data:image/png;base64,${result.images.overlay}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        <img alt="Overlay" src={`data:image/png;base64,${result.images.overlay}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
                       </div>
                     </div>
                     <div className="flex flex-col gap-3 group">
                       <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Suspicious Region</span>
                       <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img src={`data:image/png;base64,${result.images.region}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        <img alt="Suspicious region" src={`data:image/png;base64,${result.images.region}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
                       </div>
                     </div>
                   </div>
