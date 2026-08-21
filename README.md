@@ -125,7 +125,7 @@ The architecture supports turning on/off specific criteria (`use_sim`, `use_info
 ## 17. Limitations & Future Work
 - **Limitation:** Reconstructing the spatial heatmap from fused tokens requires complex index tracking which can introduce overhead.
 - **Limitation:** Coreset subsampling is currently random rather than k-center greedy; memory-bank quality (and AUROC) could improve with greedy coverage sampling.
-- **Limitation:** The decision threshold is calibrated per category (see §13); it does not transfer across categories without re-calibration.
+- **Limitation:** The decision threshold is calibrated per category (see Section 13); it does not transfer across categories without re-calibration.
 - **Future Work (Defect-Aware Extension):** Implement a preliminary scoring pass to freeze tokens with high anomaly scores, preventing them from being fused regardless of similarity or informativeness.
 
 ## 18. Citation
