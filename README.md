@@ -61,7 +61,10 @@ To automatically download a small subset (e.g., 'bottle') for testing:
 ```bash
 python scripts/download_dataset.py --category bottle
 ```
-For the full dataset, download from the MVTec AD official website and place it in `data/mvtec/`.
+The script tries a legacy tar.xz mirror first and automatically falls back to a
+Hugging Face mirror (`foersben/mvtec-ad`) that keeps the original MVTec folder
+layout for **all** categories. For the full dataset, you can also download
+manually from the MVTec AD official website and place it in `data/mvtec/`.
 
 ## 11. Building the Memory Bank
 Before running inference, you must extract normal features into the FAISS memory bank:
@@ -83,6 +86,13 @@ To evaluate AUROC and Latency over the test set:
 ```bash
 python scripts/evaluate.py --config configs/mctf.yaml --category bottle
 ```
+Results are written to `results/<model>_<category>_eval.json`.
+
+**Threshold calibration:** the image-level decision threshold
+(`anomaly_detector.threshold` in each config) was calibrated on `bottle`
+(normal mean score ≈ 0.61–0.62, anomalous ≈ 0.87–1.02). If you evaluate or
+deploy on a different category, re-calibrate: run inference over the test set,
+inspect normal vs. anomalous score distributions, and pick a separating value.
 
 ## 14. Running Frontend/Backend
 Start the FastAPI backend:
@@ -94,16 +104,28 @@ Start the React frontend (in another terminal):
 cd frontend
 npm run dev
 ```
+The frontend expects the API at `http://localhost:8000`; override with the
+`VITE_API_BASE` environment variable if the backend runs elsewhere.
 
 ## 15. Results
-*(To be populated after full dataset runs)*
-The system successfully reduces token count by 20-40% depending on the configuration, with corresponding reductions in latency, while maintaining competitive AUROC scores.
+Measured on MVTec AD `bottle` (209 train / 83 test images, DeiT-Small/16,
+CPU inference, FAISS index):
+
+| Model | Image AUROC | Pixel AUROC | Avg Latency | Tokens | Token Reduction |
+|---|---|---|---|---|---|
+| Baseline ViT | 0.9992 | 0.9872 | 47.0 ms | 196 | — |
+| MCTF ViT | 0.9508 | 0.9277 | 34.3 ms | 23 | **88.3%** |
+
+MCTF cuts token count (and correspondingly FLOPs/latency) by ~88% at a cost of
+~5pp image AUROC on this category.
 
 ## 16. Ablation Studies
 The architecture supports turning on/off specific criteria (`use_sim`, `use_info`, `use_size`) in the `configs/mctf.yaml` to observe their individual impacts on small-defect retention and latency.
 
 ## 17. Limitations & Future Work
 - **Limitation:** Reconstructing the spatial heatmap from fused tokens requires complex index tracking which can introduce overhead.
+- **Limitation:** Coreset subsampling is currently random rather than k-center greedy; memory-bank quality (and AUROC) could improve with greedy coverage sampling.
+- **Limitation:** The decision threshold is calibrated per category (see §13); it does not transfer across categories without re-calibration.
 - **Future Work (Defect-Aware Extension):** Implement a preliminary scoring pass to freeze tokens with high anomaly scores, preventing them from being fused regardless of similarity or informativeness.
 
 ## 18. Citation

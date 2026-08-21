@@ -25,6 +25,7 @@ dependencies = [
     "fvcore",
     "thop",
     "requests",
+    "huggingface_hub",
     "pillow",
 ]
 

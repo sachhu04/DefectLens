@@ -15,4 +15,5 @@ python-multipart
 fvcore
 thop
 requests
+huggingface_hub
 pillow
