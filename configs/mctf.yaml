@@ -15,4 +15,4 @@ mctf:
 anomaly_detector:
   coreset_sampling_ratio: 0.1
   num_neighbors: 9
-  threshold: 25.0 # image-level anomaly distance above which a sample is flagged
+  threshold: 0.69 # calibrated on bottle: normal mean~0.62, anomaly mean~0.87

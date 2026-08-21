@@ -37,8 +37,16 @@ class PatchCoreAnomalyDetector:
         # Random subsampling
         indices = torch.randperm(all_features.shape[0])[:num_samples]
         self.memory_bank = all_features[indices].cpu().numpy()
+        self._l2_normalize(self.memory_bank)
         
         self._build_index()
+
+    @staticmethod
+    def _l2_normalize(x: np.ndarray):
+        # L2-normalize so Euclidean distance is comparable across feature
+        # spaces and the anomaly threshold is meaningful (range [0, 2]).
+        norms = np.linalg.norm(x, axis=1, keepdims=True)
+        np.divide(x, norms + 1e-8, out=x)
 
     def _build_index(self):
         if self.memory_bank is None:
@@ -65,9 +73,13 @@ class PatchCoreAnomalyDetector:
         """
         B, N_reduced, C = features.shape
         features_np = features.detach().cpu().numpy().reshape(-1, C)
+        self._l2_normalize(features_np)
         
         if HAS_FAISS:
             distances, _ = self.faiss_index.search(features_np, self.num_neighbors)
+            # faiss IndexFlatL2 returns SQUARED distances; take the root so
+            # scores match the sklearn fallback (plain euclidean).
+            distances = np.sqrt(np.maximum(distances, 0))
         else:
             distances, _ = self.knn.kneighbors(features_np)
             
@@ -117,6 +129,9 @@ class PatchCoreAnomalyDetector:
         emb_path = os.path.join(load_dir, "embeddings.npy")
         if os.path.exists(emb_path):
             self.memory_bank = np.load(emb_path)
+            # Idempotent for banks saved after fit() (already normalized);
+            # upgrades legacy unnormalized banks.
+            self._l2_normalize(self.memory_bank)
             
         meta_path = os.path.join(load_dir, "metadata.json")
         if os.path.exists(meta_path):
