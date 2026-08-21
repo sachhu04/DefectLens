@@ -20,8 +20,12 @@ def download_and_extract(url, save_path, extract_path):
         
     print(f"Extracting {save_path}...")
     try:
+        extract_kwargs = {'path': extract_path}
+        if sys.version_info >= (3, 12):
+            # Safe extraction filters were added in Python 3.12
+            extract_kwargs['filter'] = 'data'
         with tarfile.open(save_path) as tar:
-            tar.extractall(path=extract_path, filter='data')
+            tar.extractall(**extract_kwargs)
     except Exception as e:
         print(f"Failed to extract: {e}")
         return False
