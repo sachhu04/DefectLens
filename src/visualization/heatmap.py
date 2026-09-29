@@ -5,13 +5,14 @@ import torch.nn.functional as F
 from PIL import Image
 import matplotlib.pyplot as plt
 
-def generate_heatmap(anomaly_map: torch.Tensor, original_image: np.ndarray, alpha: float = 0.5) -> dict:
+def generate_heatmap(anomaly_map: torch.Tensor, original_image: np.ndarray, alpha: float = 0.5, threshold: float = None) -> dict:
     """
     Generates a heatmap and overlays it on the original image.
     
     anomaly_map: [H_patch, W_patch] or [1, 1, H_patch, W_patch] torch tensor.
     original_image: [H, W, 3] numpy array (RGB, 0-255).
     alpha: blending factor for overlay.
+    threshold: optional threshold to anchor the maximum value so normal images aren't over-saturated.
     
     Returns:
         dict with 'heatmap', 'overlay', 'thresholded'
@@ -32,10 +33,18 @@ def generate_heatmap(anomaly_map: torch.Tensor, original_image: np.ndarray, alph
     
     # Normalize to 0-255
     min_val, max_val = anomaly_map_smoothed.min(), anomaly_map_smoothed.max()
-    if max_val > min_val:
-        norm_map = (anomaly_map_smoothed - min_val) / (max_val - min_val)
+    if threshold is not None and threshold > 0:
+        norm_max = max(max_val, threshold)
+        if norm_max > min_val:
+            norm_map = (anomaly_map_smoothed - min_val) / (norm_max - min_val)
+            norm_map = np.clip(norm_map, 0, 1)
+        else:
+            norm_map = np.zeros_like(anomaly_map_smoothed)
     else:
-        norm_map = np.zeros_like(anomaly_map_smoothed)
+        if max_val > min_val:
+            norm_map = (anomaly_map_smoothed - min_val) / (max_val - min_val)
+        else:
+            norm_map = np.zeros_like(anomaly_map_smoothed)
         
     heatmap_255 = (norm_map * 255).astype(np.uint8)
     

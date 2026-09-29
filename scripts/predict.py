@@ -53,7 +53,7 @@ def main():
 
     layer_idx = config.get('layer_idx', -2)
     grid_size = config.get('image_size', 224) // model.patch_size
-    threshold = config['anomaly_detector'].get('threshold', 25.0)
+    threshold = config['anomaly_detector'].get('threshold', 0.70)
 
     # Inference timing
     start_time = time.perf_counter()
@@ -82,7 +82,7 @@ def main():
     print(f"Token Reduction: {reduction_pct:.1f}%")
 
     # Generate heatmaps
-    vis_results = generate_heatmap(anomaly_map[0], img_np)
+    vis_results = generate_heatmap(anomaly_map[0], img_np, threshold=threshold)
     
     # Save results
     os.makedirs(args.output_dir, exist_ok=True)

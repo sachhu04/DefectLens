@@ -55,6 +55,7 @@ class PatchCoreAnomalyDetector:
         dim = self.memory_bank.shape[1]
         
         if HAS_FAISS:
+            self.memory_bank = np.ascontiguousarray(self.memory_bank, dtype=np.float32)
             self.faiss_index = faiss.IndexFlatL2(dim)
             self.faiss_index.add(self.memory_bank)
         else:
@@ -76,6 +77,7 @@ class PatchCoreAnomalyDetector:
         self._l2_normalize(features_np)
         
         if HAS_FAISS:
+            features_np = np.ascontiguousarray(features_np, dtype=np.float32)
             distances, _ = self.faiss_index.search(features_np, self.num_neighbors)
             # faiss IndexFlatL2 returns SQUARED distances; take the root so
             # scores match the sklearn fallback (plain euclidean).

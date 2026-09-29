@@ -130,7 +130,7 @@ def predict(
         
         inference_ms = (end_time - start_time) * 1000
         image_score_val = float(image_score.item())
-        threshold = config['anomaly_detector'].get('threshold', 25.0)
+        threshold = config['anomaly_detector'].get('threshold', 0.70)
         prediction_label = "anomalous" if image_score_val > threshold else "normal"
         
         orig_tokens = model.num_patches
@@ -138,7 +138,7 @@ def predict(
         reduction_pct = (1.0 - reduced_tokens / orig_tokens) * 100
         
         # Heatmap
-        vis = generate_heatmap(anomaly_map[0], img_np)
+        vis = generate_heatmap(anomaly_map[0], img_np, threshold=threshold)
         
         return JSONResponse({
             "prediction": prediction_label,
