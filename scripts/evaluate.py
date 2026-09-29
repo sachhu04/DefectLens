@@ -1,4 +1,7 @@
 import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+import warnings
+warnings.filterwarnings('ignore')
 import argparse
 import yaml
 import torch
@@ -20,6 +23,7 @@ def main():
     parser.add_argument('--data_dir', type=str, default='data/mvtec')
     parser.add_argument('--memory_bank_dir', type=str, default='artifacts/memory_bank')
     parser.add_argument('--batch_size', type=int, default=1) # batch=1 for latency timing
+    parser.add_argument('--num_workers', type=int, default=0)
     args = parser.parse_args()
 
     with open(args.config, 'r') as f:
@@ -29,7 +33,7 @@ def main():
 
     transform, mask_transform = get_transforms(config.get('image_size', 224))
     dataset = MVTecDataset(root=args.data_dir, category=args.category, is_train=False, transform=transform, mask_transform=mask_transform)
-    dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=2)
+    dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers)
 
     model = ViTFeatureExtractor(
         model_name=config['model_name'],

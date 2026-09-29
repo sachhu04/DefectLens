@@ -1,14 +1,24 @@
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+try:
+    import faiss
+    faiss.omp_set_num_threads(1)
+except Exception:
+    pass
+import torch
+torch.set_num_threads(1)
+import warnings
+warnings.filterwarnings('ignore')
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
-import os
 import time
 import yaml
 import tempfile
 import base64
 from PIL import Image
-import torch
 import numpy as np
 
 from src.models.vit import ViTFeatureExtractor

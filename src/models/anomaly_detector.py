@@ -1,14 +1,16 @@
-import torch
-import numpy as np
 import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import json
+import numpy as np
 
 try:
     import faiss
+    faiss.omp_set_num_threads(1)
     HAS_FAISS = True
-except ImportError:
+except Exception:
     HAS_FAISS = False
 
+import torch
 from sklearn.neighbors import NearestNeighbors
 
 class PatchCoreAnomalyDetector:

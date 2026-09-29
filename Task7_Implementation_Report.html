@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE411 Task 7: Implementation Part 4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.5;
+            color: #333;
+            font-size: 16.5px;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 16px 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #000000;
+        }
+
+        h1 {
+            text-align: center;
+            padding-bottom: 8px;
+            font-size: 24px;
+            margin-top: 10px;
+            margin-bottom: 14px;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            break-before: page;
+            page-break-before: always;
+        }
+
+        .project-info h2 {
+            break-before: auto;
+            page-break-before: auto;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+        }
+
+        .project-info {
+            background: #f4f7f6;
+            padding: 18px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .project-info p {
+            margin: 4px 0;
+        }
+
+        .project-info ul {
+            margin: 4px 0;
+            padding-left: 20px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e1e4e8;
+            overflow-x: auto;
+            color: #333;
+            font-size: 13.5px;
+            line-height: 1.4;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14.5px;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 7px 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #000000;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fbfbfb;
+        }
+
+        .figure {
+            text-align: center;
+            margin: 14px 0;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .figure img {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .figure-caption {
+            font-style: italic;
+            color: #555;
+            margin-top: 6px;
+            font-size: 13.5px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-info {
+            color: #31708f;
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+        }
+
+        .grid-img {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .grid-img img {
+            width: 44%;
+            max-height: 170px;
+            object-fit: contain;
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CSE411 – Computer Vision<br>Project Task 7: Implementation – Part 4</h1>
+
+    <div class="project-info">
+        <h2>1. PROJECT INFORMATION</h2>
+        <p><strong>Project Title:</strong> DefectLens: Efficient ViT-Based Anomaly Detection with Multi-Criteria Token Fusion (MCTF)</p>
+        <p><strong>Team Number:</strong> Team 7</p>
+        <p><strong>Team Members:</strong></p>
+        <ul>
+            <li>Sachin Singh – 2023bcs0064</li>
+            <li>Tanish Babu – 2023bcs0067</li>
+            <li>Ali Mohammed Maaz Mohammed Ashraf – 2023bcs0202</li>
+            <li>Chinmoy Das – 2023bcs0052</li>
+        </ul>
+        <p><strong>GitHub Source Code Link:</strong> <a href="https://github.com/sachhu04/DefectLens">https://github.com/sachhu04/DefectLens</a></p>
+    </div>
+
+    <h2>2. PROJECT OVERVIEW</h2>
+    <p>The <strong>DefectLens</strong> project is a visual anomaly detection system designed to inspect industrial products for manufacturing defects. We combine a <strong>Vision Transformer (ViT)</strong> backbone with a PatchCore-style FAISS memory bank. To make the model fast enough for edge and real-time use, we developed a <strong>Multi-Criteria Token Fusion (MCTF)</strong> module that dynamically merges uninformative background patch tokens while protecting defect tokens.</p>
+    <p><strong>Task 7 Part 4 Focus (100% Implementation):</strong> In this final milestone, Team 7 has reached <strong>100% completion of the proposed methodology</strong>. Building on the integrated prototype from Task 6, we completed the full quantitative benchmarking (evaluating ROC scores and latency on the MVTec AD dataset), conducted thorough integration testing across all modules, and prepared the final source code repository.</p>
+
+    <h2>3. COMPLETE PROPOSED METHODOLOGY</h2>
+    <p>The complete end-to-end pipeline operates as follows:</p>
+    <p><strong>Input Image &rarr; Preprocessing &rarr; [ViT Backbone + MCTF Token Fusion] &rarr; [FAISS Memory Bank Matching] &rarr; [Anomaly Scoring & Heatmaps] &rarr; FastAPI Backend &harr; React UI Dashboard</strong></p>
+
+    <div class="alert alert-info">
+        <strong>Implementation Status up to Task 7 (100% Complete):</strong><br>
+        Dataset Loaders, Preprocessing, ViT Backbone, Multi-Criteria Token Fusion, FAISS Memory Bank, Anomaly Distance Scoring, Heatmap Reconstruction, FastAPI REST Backend, React.js Frontend Dashboard, Automated Integration Test Suite, and Full ROC / Latency Benchmarking.
+    </div>
+
+    <p>All core components originally proposed in our project architecture are now fully implemented and functioning together seamlessly.</p>
+
+    <h2>4. MODULE INTEGRATION & SYSTEM TESTING</h2>
+    <p>As required by Task 7, we integrated and tested all system modules together. To verify that every part of the pipeline works reliably without manual intervention, we created an automated end-to-end test script (<code>scripts/test_pipeline.py</code>) that validates all five stages in order:</p>
+    <ul>
+        <li><strong>Module 1 (Dataset):</strong> Verifies image loading, resizing to 224&times;224, and PyTorch tensor normalization.</li>
+        <li><strong>Module 2 (ViT + MCTF):</strong> Verifies the ViT feature extraction and confirms that MCTF successfully merges background tokens (reducing token count by over 88%).</li>
+        <li><strong>Module 3 (Memory Bank):</strong> Verifies FAISS nearest-neighbor matching against the nominal feature bank.</li>
+        <li><strong>Module 4 (Visualization):</strong> Verifies spatial heatmap upsampling, Gaussian smoothing, and contour detection.</li>
+        <li><strong>Module 5 (Backend API):</strong> Verifies the FastAPI endpoints (<code>/health</code>, <code>/model-info</code>, <code>/categories</code>, and <code>/predict</code>).</li>
+    </ul>
+
+    <div class="figure">
+        <img src="real_screenshot_integration.png" alt="System Integration Test Execution" style="max-height: 290px;">
+        <div class="figure-caption"><strong>Figure 1. Execution of the full system integration test suite.</strong> Terminal output showing all 5 modules tested in sequence with a 100% pass rate.</div>
+    </div>
+
+    <h2>5. EXPERIMENTAL RESULTS & PERFORMANCE EVALUATION</h2>
+    <p>To evaluate the efficiency and accuracy of our proposed MCTF approach, we ran automated benchmark evaluations (<code>scripts/evaluate.py</code>) over the MVTec AD test set for the <code>bottle</code> category (209 training images and 83 test images). We tested both the standard <strong>Baseline ViT</strong> (without token fusion) and our <strong>MCTF-ViT</strong> on the same machine to measure the exact differences in speed, token count, and detection accuracy.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Tokens</th>
+                <th>Token Reduction</th>
+                <th>Avg Latency</th>
+                <th>Image ROC</th>
+                <th>Pixel ROC</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Baseline ViT</strong></td>
+                <td>196</td>
+                <td>0.0%</td>
+                <td>45.07 ms</td>
+                <td><strong>100.0%</strong></td>
+                <td><strong>98.68%</strong></td>
+            </tr>
+            <tr>
+                <td><strong>MCTF-ViT (Ours)</strong></td>
+                <td><strong>23</strong></td>
+                <td><strong>88.27%</strong></td>
+                <td><strong>19.73 ms</strong></td>
+                <td><strong>94.92%</strong></td>
+                <td><strong>92.90%</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="figure">
+        <img src="real_screenshot_evaluate.png" alt="Evaluation Script Execution" style="max-height: 220px;">
+        <div class="figure-caption"><strong>Figure 2. Automated evaluation benchmark output.</strong> Terminal execution showing MCTF achieving an average latency of 19.73 ms (2.28x faster than baseline), an 88.27% token reduction, 94.92% Image ROC, and 92.90% Pixel ROC.</div>
+    </div>
+
+    <p><strong>Key Findings:</strong></p>
+    <ul>
+        <li><strong>Speed Improvement:</strong> MCTF cut average per-image inference latency from <strong>45.07 ms down to 19.73 ms</strong>, making the system <strong>2.28x faster</strong> (a 56.2% reduction in inference time).</li>
+        <li><strong>Token Efficiency:</strong> The number of tokens processed by subsequent layers was reduced from 196 to only 23 (an 88.27% reduction).</li>
+        <li><strong>Accuracy Preservation:</strong> Despite fusing almost 90% of tokens, the model retained <strong>94.92% Image ROC</strong> and <strong>92.90% Pixel ROC</strong>, confirming that our informativeness criterion successfully prevents defect patches from being lost.</li>
+    </ul>
+
+    <h2>6. INFERENCE & VISUAL LOCALIZATION OUTPUTS</h2>
+    <p>We tested single-image anomaly prediction using <code>scripts/predict.py</code> on a test sample from the MVTec AD dataset containing a real structural defect (<code>broken_small/000.png</code>).</p>
+
+    <div class="figure">
+        <img src="real_screenshot_predict.png" alt="Inference Script Execution" style="max-height: 230px;">
+        <div class="figure-caption"><strong>Figure 3. Single prediction execution via CLI.</strong> The script classifies the image, outputs the anomaly score (0.6555), measures execution time (20.61 ms), and calculates an 88.3% token reduction.</div>
+    </div>
+
+    <div class="figure">
+        <div class="grid-img">
+            <img src="outputs/prediction/heatmap.png" alt="Anomaly Heatmap">
+            <img src="outputs/prediction/overlay.png" alt="Heatmap Overlay">
+        </div>
+        <div class="figure-caption"><strong>Figure 4. Visual model outputs.</strong> On the left is the raw distance heatmap back-projected from the fused token coordinates. On the right is the overlay onto the original bottle, clearly showing the crack on the lower body.</div>
+    </div>
+
+    <h2>7. WEB DASHBOARD PROTOTYPE</h2>
+    <p>To demonstrate practical use in a factory inspection setup, we connected the backend to our React frontend dashboard. An operator can select the category, choose the model pipeline (MCTF vs Baseline), upload an image from the assembly line, and immediately view the classification and visual defect heatmaps.</p>
+
+    <div class="figure">
+        <img src="real_screenshot_ui_results.png" alt="React UI Results" style="max-height: 380px;">
+        <div class="figure-caption"><strong>Figure 5. Working Web Dashboard.</strong> The browser interface displaying live inspection results on a defective test sample: Prediction (ANOMALOUS), Anomaly Score (0.912), Latency (22.3 ms), Token Reduction (88.3%), and the synchronized view of Original, Heatmap, Overlay, and Suspicious Region.</div>
+    </div>
+
+    <h2>8. FINAL IMPLEMENTATION STATUS (100%)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Component</th>
+                <th>Task Milestone</th>
+                <th>Status</th>
+                <th>Evidence in Codebase</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Dataset Pipelines & Loaders</td>
+                <td>Task 4</td>
+                <td>Completed (100%)</td>
+                <td><code>src/data/dataset.py</code></td>
+            </tr>
+            <tr>
+                <td>ViT Backbone & Feature Extraction</td>
+                <td>Task 4</td>
+                <td>Completed (100%)</td>
+                <td><code>src/models/vit.py</code></td>
+            </tr>
+            <tr>
+                <td>MCTF Dynamic Token Fusion</td>
+                <td>Task 4</td>
+                <td>Completed (100%)</td>
+                <td><code>src/models/mctf.py</code></td>
+            </tr>
+            <tr>
+                <td>FAISS Memory Bank & Anomaly Detector</td>
+                <td>Task 5</td>
+                <td>Completed (100%)</td>
+                <td><code>src/models/anomaly_detector.py</code></td>
+            </tr>
+            <tr>
+                <td>FastAPI REST Backend Microservice</td>
+                <td>Task 5</td>
+                <td>Completed (100%)</td>
+                <td><code>backend/app/main.py</code></td>
+            </tr>
+            <tr>
+                <td>Interactive React Frontend Dashboard</td>
+                <td>Task 6</td>
+                <td>Completed (100%)</td>
+                <td><code>frontend/src/App.jsx</code></td>
+            </tr>
+            <tr>
+                <td>ROC & Latency Benchmarking</td>
+                <td>Task 7</td>
+                <td>Completed (100%)</td>
+                <td><code>scripts/evaluate.py</code> & results JSON</td>
+            </tr>
+            <tr>
+                <td>Full System Integration Testing</td>
+                <td>Task 7</td>
+                <td>Completed (100%)</td>
+                <td><code>scripts/test_pipeline.py</code> (Figure 1)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>9. SOURCE CODE & REPRODUCIBILITY</h2>
+    <p>All source code, configuration files, test scripts, and documentation for DefectLens are publicly hosted on GitHub:</p>
+    <p style="text-align: center; font-size: 18px; margin: 12px 0;">
+        <strong>GitHub Repository:</strong> <a href="https://github.com/sachhu04/DefectLens">https://github.com/sachhu04/DefectLens</a>
+    </p>
+
+    <div class="figure">
+        <img src="real_screenshot_git.png" alt="Git Status and Commit History" style="max-height: 220px;">
+        <div class="figure-caption"><strong>Figure 6. Git repository delivery.</strong> Showing our verified commit log on branch <code>main</code> synchronized with remote origin.</div>
+    </div>
+
+    <p style="margin-bottom: 6px;"><strong>Steps to Reproduce:</strong></p>
+    <pre><code># 1. Clone repository & install dependencies
+git clone https://github.com/sachhu04/DefectLens.git && cd DefectLens
+pip install -r requirements.txt
+
+# 2. Run full system integration test suite
+python scripts/test_pipeline.py
+
+# 3. Run benchmark evaluation (MCTF ViT)
+python scripts/evaluate.py --config configs/mctf.yaml --category bottle
+
+# 4. Start the application (Backend: 8000, Frontend: 5173)
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+cd frontend && npm install && npm run dev</code></pre>
+
+    <h2>10. CONCLUSION</h2>
+    <p>For Task 7 (Implementation Part 4), Team 7 has successfully reached <strong>100% implementation of the DefectLens project</strong>. We completed the proposed methodology by linking our Vision Transformer backbone with the Multi-Criteria Token Fusion module and FAISS memory bank, wrapped in a FastAPI backend and a React dashboard. Our experimental results prove that MCTF reduces active token count by <strong>88.27%</strong> and provides a <strong>2.28x speedup in inference latency</strong> (from 45.07 ms to 19.73 ms) while maintaining high anomaly detection accuracy (<strong>94.92% Image ROC</strong>). The entire project code is tested, documented, and available in our GitHub repository.</p>
+
+</body>
+
+</html>
