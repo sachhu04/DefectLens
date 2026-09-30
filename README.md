@@ -40,6 +40,7 @@ The project is built around the **MVTec AD** dataset, the standard benchmark for
 ## 9. Installation
 ```bash
 # Clone and enter the repository
+git clone https://github.com/sachhu04/DefectLens.git
 cd DefectLens
 
 # Install Python requirements
