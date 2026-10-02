@@ -197,7 +197,7 @@
 
     <h2>2. PROJECT OVERVIEW</h2>
     <p>The <strong>DefectLens</strong> project is a visual anomaly detection system designed to inspect industrial products for manufacturing defects. We combine a <strong>Vision Transformer (ViT)</strong> backbone with a PatchCore-style FAISS memory bank. To make the model fast enough for edge and real-time use, we developed a <strong>Multi-Criteria Token Fusion (MCTF)</strong> module that dynamically merges uninformative background patch tokens while protecting defect tokens.</p>
-    <p><strong>Task 7 Part 4 Focus (100% Implementation):</strong> In this final milestone, Team 7 has reached <strong>100% completion of the proposed methodology</strong>. Building on the integrated prototype from Task 6, we completed the full quantitative benchmarking (evaluating ROC scores and latency on the MVTec AD dataset), conducted thorough integration testing across all modules, and prepared the final source code repository.</p>
+    <p><strong>Task 7 Part 4 Focus (100% Implementation):</strong> In this final milestone, Team 7 has reached <strong>100% completion of the proposed methodology</strong>. Building on the integrated prototype from Task 6, we completed the full quantitative benchmarking (evaluating AUROC scores and latency on the MVTec AD dataset), conducted thorough integration testing across all modules, and prepared the final source code repository.</p>
 
     <h2>3. COMPLETE PROPOSED METHODOLOGY</h2>
     <p>The complete end-to-end pipeline operates as follows:</p>
@@ -205,7 +205,7 @@
 
     <div class="alert alert-info">
         <strong>Implementation Status up to Task 7 (100% Complete):</strong><br>
-        Dataset Loaders, Preprocessing, ViT Backbone, Multi-Criteria Token Fusion, FAISS Memory Bank, Anomaly Distance Scoring, Heatmap Reconstruction, FastAPI REST Backend, React.js Frontend Dashboard, Automated Integration Test Suite, and Full ROC / Latency Benchmarking.
+        Dataset Loaders, Preprocessing, ViT Backbone, Multi-Criteria Token Fusion, FAISS Memory Bank, Anomaly Distance Scoring, Heatmap Reconstruction, FastAPI REST Backend, React.js Frontend Dashboard, Automated Integration Test Suite, and Full AUROC / Latency Benchmarking.
     </div>
 
     <p>All core components originally proposed in our project architecture are now fully implemented and functioning together seamlessly.</p>
@@ -235,8 +235,8 @@
                 <th>Tokens</th>
                 <th>Token Reduction</th>
                 <th>Avg Latency</th>
-                <th>Image ROC</th>
-                <th>Pixel ROC</th>
+                <th>Image AUROC</th>
+                <th>Pixel AUROC</th>
             </tr>
         </thead>
         <tbody>
@@ -261,14 +261,14 @@
 
     <div class="figure">
         <img src="real_screenshot_evaluate.png" alt="Evaluation Script Execution" style="max-height: 220px;">
-        <div class="figure-caption"><strong>Figure 2. Automated evaluation benchmark output.</strong> Terminal execution showing MCTF achieving an average latency of 19.73 ms (2.28x faster than baseline), an 88.27% token reduction, 94.92% Image ROC, and 92.90% Pixel ROC.</div>
+        <div class="figure-caption"><strong>Figure 2. Automated evaluation benchmark output.</strong> Terminal execution showing MCTF achieving an average latency of 19.73 ms (2.28x faster than baseline), an 88.27% token reduction, 94.92% Image AUROC, and 92.90% Pixel AUROC.</div>
     </div>
 
     <p><strong>Key Findings:</strong></p>
     <ul>
         <li><strong>Speed Improvement:</strong> MCTF cut average per-image inference latency from <strong>45.07 ms down to 19.73 ms</strong>, making the system <strong>2.28x faster</strong> (a 56.2% reduction in inference time).</li>
         <li><strong>Token Efficiency:</strong> The number of tokens processed by subsequent layers was reduced from 196 to only 23 (an 88.27% reduction).</li>
-        <li><strong>Accuracy Preservation:</strong> Despite fusing almost 90% of tokens, the model retained <strong>94.92% Image ROC</strong> and <strong>92.90% Pixel ROC</strong>, confirming that our informativeness criterion successfully prevents defect patches from being lost.</li>
+        <li><strong>Accuracy Preservation:</strong> Despite fusing almost 90% of tokens, the model retained <strong>94.92% Image AUROC</strong> and <strong>92.90% Pixel AUROC</strong>, confirming that our informativeness criterion successfully prevents defect patches from being lost.</li>
     </ul>
 
     <h2>6. INFERENCE & VISUAL LOCALIZATION OUTPUTS</h2>
@@ -343,7 +343,7 @@
                 <td><code>frontend/src/App.jsx</code></td>
             </tr>
             <tr>
-                <td>ROC & Latency Benchmarking</td>
+                <td>AUROC & Latency Benchmarking</td>
                 <td>Task 7</td>
                 <td>Completed (100%)</td>
                 <td><code>scripts/evaluate.py</code> & results JSON</td>
@@ -384,7 +384,7 @@ python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 cd frontend && npm install && npm run dev</code></pre>
 
     <h2>10. CONCLUSION</h2>
-    <p>For Task 7 (Implementation Part 4), Team 7 has successfully reached <strong>100% implementation of the DefectLens project</strong>. We completed the proposed methodology by linking our Vision Transformer backbone with the Multi-Criteria Token Fusion module and FAISS memory bank, wrapped in a FastAPI backend and a React dashboard. Our experimental results prove that MCTF reduces active token count by <strong>88.27%</strong> and provides a <strong>2.28x speedup in inference latency</strong> (from 45.07 ms to 19.73 ms) while maintaining high anomaly detection accuracy (<strong>94.92% Image ROC</strong>). The entire project code is tested, documented, and available in our GitHub repository.</p>
+    <p>For Task 7 (Implementation Part 4), Team 7 has successfully reached <strong>100% implementation of the DefectLens project</strong>. We completed the proposed methodology by linking our Vision Transformer backbone with the Multi-Criteria Token Fusion module and FAISS memory bank, wrapped in a FastAPI backend and a React dashboard. Our experimental results prove that MCTF reduces active token count by <strong>88.27%</strong> and provides a <strong>2.28x speedup in inference latency</strong> (from 45.07 ms to 19.73 ms) while maintaining high anomaly detection accuracy (<strong>94.92% Image AUROC</strong>). The entire project code is tested, documented, and available in our GitHub repository.</p>
 
 </body>
 
