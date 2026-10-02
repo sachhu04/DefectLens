@@ -272,11 +272,11 @@
     </ul>
 
     <h2>6. INFERENCE & VISUAL LOCALIZATION OUTPUTS</h2>
-    <p>We tested single-image anomaly prediction using <code>scripts/predict.py</code> on a test sample from the MVTec AD dataset containing a real structural defect (<code>broken_small/000.png</code>).</p>
+    <p>We tested single-image anomaly prediction using <code>scripts/predict.py</code> on a test sample from the MVTec AD dataset containing a real structural defect (<code>broken_large/000.png</code>).</p>
 
     <div class="figure">
         <img src="real_screenshot_predict.png" alt="Inference Script Execution" style="max-height: 230px;">
-        <div class="figure-caption"><strong>Figure 3. Single prediction execution via CLI.</strong> The script classifies the image, outputs the anomaly score (0.6555), measures execution time (20.61 ms), and calculates an 88.3% token reduction.</div>
+        <div class="figure-caption"><strong>Figure 3. Single prediction execution via CLI.</strong> The script correctly classifies the defective sample as anomalous, outputs the anomaly score (0.9123), measures execution time (56.31 ms), and calculates an 88.3% token reduction.</div>
     </div>
 
     <div class="figure">
@@ -284,7 +284,7 @@
             <img src="outputs/prediction/heatmap.png" alt="Anomaly Heatmap">
             <img src="outputs/prediction/overlay.png" alt="Heatmap Overlay">
         </div>
-        <div class="figure-caption"><strong>Figure 4. Visual model outputs.</strong> On the left is the raw distance heatmap back-projected from the fused token coordinates. On the right is the overlay onto the original bottle, clearly showing the crack on the lower body.</div>
+        <div class="figure-caption"><strong>Figure 4. Visual model outputs.</strong> On the left is the raw distance heatmap back-projected from the fused token coordinates. On the right is the overlay onto the original bottle, clearly localizing the structural fracture on the bottle rim.</div>
     </div>
 
     <h2>7. WEB DASHBOARD PROTOTYPE</h2>
