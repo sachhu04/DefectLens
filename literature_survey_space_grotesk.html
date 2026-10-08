@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DefectLens: Literature Survey and Research Gap Identification (Space Grotesk - Team 7)</title>
+    <style>
+        /* Exact Academic IEEE Format with Space Grotesk Font */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.30;
+            color: #000000;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-size: 9.4pt;
+        }
+
+        .page-container {
+            width: 100%;
+        }
+
+        .page-section {
+            page-break-after: always;
+            break-after: page;
+        }
+
+        .page-section:last-child {
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        /* Title Area (Page 1) */
+        .title-block {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h1.paper-title {
+            font-size: 17pt; 
+            margin-bottom: 4px;
+            font-weight: 700; 
+            line-height: 1.2;
+            color: #000000;
+        }
+
+        .sub-header {
+            font-size: 10.5pt;
+            font-weight: 600;
+            color: #111111;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        /* Authors Table in Roll Number Order */
+        .authors-table {
+            width: 92%;
+            margin: 0 auto 4px auto;
+            text-align: center;
+            border: none;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 0 4px;
+        }
+        
+        .authors-table td {
+            border: none;
+            padding: 2px 4px;
+            vertical-align: top;
+        }
+
+        .author-name {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 1px;
+        }
+
+        .author-roll {
+            font-size: 9pt;
+            font-style: italic;
+            color: #000000;
+        }
+
+        .affiliation {
+            font-size: 9pt;
+            font-style: italic;
+            text-align: center;
+            color: #000000;
+            margin-top: 3px;
+            margin-bottom: 10px;
+        }
+
+        /* Abstract */
+        .abstract {
+            margin: 0 auto 12px auto;
+            width: 98%;
+            font-weight: normal;
+            text-align: justify;
+            font-size: 9pt;
+            line-height: 1.34;
+            color: #000000;
+        }
+
+        .abstract span {
+            font-style: italic;
+            font-weight: 700;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            column-count: 2;
+            column-gap: 0.3in;
+            text-align: justify;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 10.5pt;
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            color: #000000;
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+
+        p {
+            margin: 0 0 6px 0;
+            text-indent: 12px;
+            line-height: 1.30;
+            color: #000000;
+        }
+
+        p.no-indent {
+            text-indent: 0;
+        }
+
+        /* Comparison Table Styling (Page 2) */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 4px 0 12px 0;
+            font-size: 8.4pt;
+            line-height: 1.24;
+        }
+        
+        table.data-table th, table.data-table td {
+            border: 1px solid #333333;
+            padding: 4px 5px;
+            vertical-align: top;
+            text-align: left;
+            color: #000000;
+        }
+
+        table.data-table th {
+            background-color: #f0f0f0;
+            font-weight: 700;
+            text-align: center;
+            border-top: 1.8px solid #000000;
+            border-bottom: 1.4px solid #000000;
+            text-transform: uppercase;
+            font-size: 8.2pt;
+            color: #000000;
+        }
+        
+        table.data-table tr:last-child td {
+            border-bottom: 1.8px solid #000000;
+        }
+
+        .table-caption {
+            text-align: center;
+            font-weight: 700;
+            font-size: 9pt;
+            margin-top: 2px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            color: #000000;
+        }
+
+        /* Research Gap & Differentials Items */
+        .gap-item {
+            margin-bottom: 8px;
+            font-size: 9.2pt;
+            line-height: 1.30;
+            color: #000000;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .diff-item {
+            margin-bottom: 8px;
+            font-size: 9.2pt;
+            line-height: 1.30;
+            color: #000000;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .conclusion-block {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 8px;
+        }
+
+        .item-heading {
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 1px;
+        }
+
+        /* References Section (Page 3) */
+        ol.references {
+            padding-left: 16px;
+            font-size: 8.5pt;
+            line-height: 1.30;
+            margin-top: 4px;
+            color: #000000;
+        }
+
+        ol.references li {
+            margin-bottom: 5px;
+            text-align: justify;
+            color: #000000;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        @media print {
+            body {
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none;
+            }
+            @page { 
+                margin: 0.35in 0.45in; 
+                size: A4; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <!-- ================= PAGE 1 ================= -->
+        <div class="page-section">
+            <!-- Title Block -->
+            <div class="title-block">
+                <h1 class="paper-title">Literature Survey and Research Gap Identification</h1>
+                <div class="sub-header">DefectLens: Efficient ViT-Based Industrial Anomaly Detection with Multi-Criteria Token Fusion (MCTF)</div>
+                
+                <!-- Authors in exact Roll Number order -->
+                <table class="authors-table">
+                    <tr>
+                        <td>
+                            <div class="author-name">Chinmoy Das</div>
+                            <div class="author-roll">Roll No: 2023bcs0052</div>
+                        </td>
+                        <td>
+                            <div class="author-name">Sachin Singh</div>
+                            <div class="author-roll">Roll No: 2023bcs0064</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="author-name">Tanish Babu</div>
+                            <div class="author-roll">Roll No: 2023bcs0067</div>
+                        </td>
+                        <td>
+                            <div class="author-name">Ali Mohammed Maaz Mohammed Ashraf</div>
+                            <div class="author-roll">Roll No: 2023bcs0202</div>
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="affiliation">
+                    <b>Team Number: 07</b> &bull; Course: Computer Vision &bull; Department of Computer Science and Engineering
+                </div>
+            </div>
+
+            <!-- Abstract -->
+            <div class="abstract">
+                <span>Abstract</span>—Automated Optical Inspection (AOI) in smart manufacturing requires high precision to localize subtle defects while strictly maintaining high throughput. While Vision Transformers (ViTs) and nearest-neighbor patch-memory banks (e.g., PatchCore) represent state-of-the-art visual anomaly detection, ViTs incur quadratic computational complexity (<i>O</i>(<i>N</i><sup>2</sup>)) with image token length, causing latency bottlenecks on edge hardware. This report conducts a concise survey of 8 canonical peer-reviewed research papers across memory-bank modeling, reconstruction, normalizing flows, unified transformers, and token reduction. We provide an IEEE comparative matrix, delineate core research gaps, and demonstrate how <b>DefectLens</b> overcomes these challenges via Multi-Criteria Token Fusion (MCTF) with informativeness shielding.
+            </div>
+
+            <!-- Section I & Section II in Two Columns -->
+            <div class="two-column">
+                <h2>I. Introduction</h2>
+                <p>
+                    Industrial surface inspection ensures component reliability across manufacturing sectors. Because real-world defects are rare and unpredictable, <i>Unsupervised Visual Anomaly Detection (VAD)</i> trains exclusively on pristine ("normal") parts, flagging flaws as out-of-distribution deviations during inference.
+                </p>
+                <p>
+                    While Vision Transformers (ViTs) capture superior global context compared to CNNs, quadratic self-attention scaling (<i>N</i> = (<i>H</i>/<i>P</i>) &times; (<i>W</i>/<i>P</i>)) on high-resolution inputs (512&times;512, <i>N</i> = 1024) leads to high latency (~45ms/frame). To resolve this, <b>DefectLens</b> combines ViTs with Multi-Criteria Token Fusion (MCTF) and a FAISS PatchCore memory bank.
+                </p>
+
+                <h2>II. Survey of 8 Canonical Research Papers</h2>
+                
+                <p class="no-indent">
+                    <b>1. PatchCore (Roth et al., CVPR 2022) [1]:</b> Extracts locally aggregated CNN patch features into a memory bank subsampled via Minimax Coreset, scoring anomalies by nearest-neighbor distance. Achieves <b>99.1% Image AUROC</b> and <b>98.1% Pixel AUROC</b> on MVTec AD. <i>Limitations:</i> High latency on high-res images; CNNs lack global context.
+                </p>
+
+                <p class="no-indent">
+                    <b>2. MVTec AD Benchmark (Bergmann et al., CVPR 2019) [2]:</b> Establishes the standard industrial benchmark and evaluates baseline Autoencoders (SSIM-AE, <i>L</i><sub>2</sub>-AE) and VAEs, yielding <b>70.0%–82.0% Image AUROC</b>. <i>Limitations:</i> Suffer from identical reconstruction shortcuts (reconstructing defects) and edge blurriness.
+                </p>
+
+                <p class="no-indent">
+                    <b>3. PaDiM (Defard et al., ICPR 2020) [3]:</b> Models patch embeddings across CNN layers as localized multivariate Gaussians <i>N</i>(<i>&mu;</i><sub>(<i>i</i>,<i>j</i>)</sub>, <i>&Sigma;</i><sub>(<i>i</i>,<i>j</i>)</sub>), scoring by Mahalanobis distance. Achieves <b>97.9% Image AUROC</b> and <b>97.5% Pixel AUROC</b>. <i>Limitations:</i> Requires rigid spatial alignment; covariance storage scales as <i>O</i>(<i>HW &middot; D</i><sup>2</sup>).
+                </p>
+
+                <p class="no-indent">
+                    <b>4. MCTF (Lee, Choi, & Kim, CVPR 2024) [4]:</b> Introduces token reduction in ViTs using Cosine Similarity, One-step-ahead Attention (shielding informative tokens), and Size penalties. Achieves <b>44% FLOP reduction</b> with a <b>+0.5% accuracy increase</b> on ImageNet. <i>Limitations:</i> Evaluated only on classification; never applied to anomaly detection.
+                </p>
+
+                <p class="no-indent">
+                    <b>5. Token Merging (ToMe) (Bolya et al., ICLR 2023) [5]:</b> Bipartite soft matching merging top-<i>r</i> similar tokens via key similarity, achieving a <b>2.0&times; speedup</b> and 44% GFLOP reduction. <i>Limitations:</i> Pure similarity merging destroys small anomaly tokens by merging them into background clusters.
+                </p>
+
+                <p class="no-indent">
+                    <b>6. UniAD (You et al., NeurIPS 2022) [6]:</b> Unified multi-class transformer detector with Query Decoder and Neighbor-Masked Attention (NMA). Achieves <b>96.5% Image AUROC</b> and <b>96.8% Pixel AUROC</b>. <i>Limitations:</i> Heavy training cost; high latency (~65ms) limits edge deployment.
+                </p>
+
+                <p class="no-indent">
+                    <b>7. FastFlow (Yu et al., arXiv 2021) [7]:</b> 2D Normalizing Flows mapping spatial ViT/CaiT features to a 2D Gaussian distribution. Achieves <b>99.4% Image AUROC</b> (CaiT) and <b>98.8%</b> (ViT-B). <i>Limitations:</i> High inference computation for invertible flow layers; large model weight footprint.
+                </p>
+
+                <p class="no-indent">
+                    <b>8. Reverse Distillation (Deng & Li, CVPR 2022) [8]:</b> Teacher-Student distillation with reverse One-Class Embedding bottleneck, scoring via cosine divergence. Achieves <b>98.5% Image AUROC</b> and <b>97.8% Pixel AUROC</b> at ~45 FPS. <i>Limitations:</i> Category-specific student retraining; cannot dynamically prune tokens.
+                </p>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2 ================= -->
+        <div class="page-section">
+            <!-- Table I at the Very Top of Page 2 -->
+            <div class="table-caption">TABLE I: COMPARATIVE MATRIX OF 8 SURVEYED RESEARCH PAPERS</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 17%;">Paper &amp; Model</th>
+                        <th style="width: 29%;">Method / Technique</th>
+                        <th style="width: 11%;">Dataset</th>
+                        <th style="width: 19%;">Results / Metrics</th>
+                        <th style="width: 24%;">Limitations &amp; Bottlenecks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>PatchCore</b><br>(Roth et al., CVPR 2022) [1]</td>
+                        <td>CNN patch aggregation; Minimax Coreset memory subsampling; Nearest-neighbor scoring.</td>
+                        <td>MVTec AD</td>
+                        <td>Image AUROC: <b>99.1%</b><br>Pixel AUROC: <b>98.1%</b><br>PRO: <b>98.2%</b></td>
+                        <td>High latency on high-res images; quadratic patch matching cost; CNN lacks global context.</td>
+                    </tr>
+                    <tr>
+                        <td><b>MVTec AD Baseline</b><br>(Bergmann et al., CVPR 2019) [2]</td>
+                        <td>Reconstructive autoencoders (SSIM-AE, <i>L</i><sub>2</sub>-AE, VAE) and texture GMM baselines.</td>
+                        <td>MVTec AD</td>
+                        <td>Image AUROC: <b>70.0–82.0%</b><br>SSIM-AE: <b>75.4%</b></td>
+                        <td>Identity shortcut problem (reconstructs defects); blurry edges cause heavy false alarms in localization.</td>
+                    </tr>
+                    <tr>
+                        <td><b>PaDiM</b><br>(Defard et al., ICPR 2020) [3]</td>
+                        <td>Multi-layer CNN patch concatenation; Multivariate Gaussian per position; Mahalanobis scoring.</td>
+                        <td>MVTec AD, STC</td>
+                        <td>Image AUROC: <b>97.9%</b><br>Pixel AUROC: <b>97.5%</b><br>FPS: ~15</td>
+                        <td>Assumes strict spatial alignment; fails on rotated/translated parts; high memory footprint (<i>O</i>(<i>HW &middot; D</i><sup>2</sup>)).</td>
+                    </tr>
+                    <tr>
+                        <td><b>MCTF (Vision)</b><br>(Lee et al., CVPR 2024) [4]</td>
+                        <td>Bipartite soft matching with Cosine Similarity, One-step-ahead Attention, and Token Size penalty.</td>
+                        <td>ImageNet-1K, ImageNet-V2</td>
+                        <td>FLOP Reduction: <b>44%</b><br>Top-1 Acc Gain: <b>+0.5%</b></td>
+                        <td>Built only for global classification; lacks spatial inverse-mapping for anomaly heatmaps; never used with memory banks.</td>
+                    </tr>
+                    <tr>
+                        <td><b>ToMe (Token Merging)</b><br>(Bolya et al., ICLR 2023) [5]</td>
+                        <td>Training-free bipartite soft matching merging top-<i>r</i> most similar tokens via dot-product keys.</td>
+                        <td>ImageNet-1K, Kinetics-400</td>
+                        <td>Throughput: <b>2.0&times; speedup</b><br>GFLOP Reduction: <b>44%</b></td>
+                        <td>Pure similarity merging destroys small anomaly tokens by fusing them into large background clusters (false negatives).</td>
+                    </tr>
+                    <tr>
+                        <td><b>UniAD</b><br>(You et al., NeurIPS 2022) [6]</td>
+                        <td>Unified multi-class transformer framework with Query Decoder and Neighbor-Masked Attention.</td>
+                        <td>MVTec AD, VisA</td>
+                        <td>Image AUROC: <b>96.5%</b><br>Pixel AUROC: <b>96.8%</b></td>
+                        <td>Extreme training complexity (hundreds of GPU hours); high latency (~65ms) limits edge deployment.</td>
+                    </tr>
+                    <tr>
+                        <td><b>FastFlow</b><br>(Yu et al., arXiv 2021) [7]</td>
+                        <td>2D Normalizing Flows with 2D convolutional subnets mapping ViT/CaiT features to Gaussian.</td>
+                        <td>MVTec AD</td>
+                        <td>Image AUROC: <b>99.4% (CaiT)</b><br>Image AUROC: <b>98.8% (ViT)</b><br>Pixel AUROC: <b>97.5%</b></td>
+                        <td>High inference computation for invertible flow layers; large model weight footprint; training instability.</td>
+                    </tr>
+                    <tr>
+                        <td><b>RD4AD (Reverse Distill)</b><br>(Deng &amp; Li, CVPR 2022) [8]</td>
+                        <td>Teacher-Student distillation with reverse One-Class Embedding bottleneck; cosine scoring.</td>
+                        <td>MVTec AD</td>
+                        <td>Image AUROC: <b>98.5%</b><br>Pixel AUROC: <b>97.8%</b><br>FPS: ~45</td>
+                        <td>Requires training custom student models per class; struggles on complex textures; cannot dynamically reduce tokens.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Section III in Two Columns -->
+            <div class="two-column">
+                <h2>III. Identification of Research Gaps in Existing Work</h2>
+                <p class="no-indent">
+                    Comparative review of the literature reveals four critical open research gaps:
+                </p>
+
+                <div class="gap-item">
+                    <div class="item-heading">1. Quadratic Complexity of ViTs in High-Resolution AOI:</div>
+                    Self-attention scales as <i>O</i>(<i>N</i><sup>2</sup>) with token sequence length <i>N</i>. For high-resolution inspection (512&times;512, <i>N</i> = 1024), standard ViTs incur ~45ms latency per image, creating throughput bottlenecks on fast factory lines.
+                </div>
+
+                <div class="gap-item">
+                    <div class="item-heading">2. Catastrophic Defect Elimination in Naive Token Pruning (ToMe):</div>
+                    Existing token reduction methods rely purely on feature similarity. In surface inspection, subtle flaws occupy only 1–4 tokens out of 1024. Pure similarity merging fuses anomaly tokens into massive background clusters, irreversibly destroying defect sensitivity.
+                </div>
+
+                <div class="gap-item">
+                    <div class="item-heading">3. Memory Bank Scalability &amp; Coordinate Tracking:</div>
+                    Memory-bank models (PatchCore) query 1,024 unpruned tokens per frame against millions of FAISS vectors, causing high search latency. Furthermore, spatial coordinates must be preserved during reduction to render accurate pixel-level heatmaps.
+                </div>
+
+                <div class="gap-item">
+                    <div class="item-heading">4. Absence of Token Fusion in Industrial Anomaly Detection:</div>
+                    Advanced token fusion methods like MCTF [4] were developed strictly for closed-set classification and have never been adapted for unsupervised VAD or integrated with nearest-neighbor memory banks.
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3 (FINAL PAGE) ================= -->
+        <div class="page-section">
+            <div class="two-column">
+                <h2>IV. How DefectLens Relates to &amp; Differs from Existing Work</h2>
+                <p class="no-indent">
+                    <b>DefectLens</b> addresses each identified gap through a novel architectural synergy combining Vision Transformers, Multi-Criteria Token Fusion, and FAISS memory banks:
+                </p>
+
+                <div class="diff-item">
+                    <div class="item-heading">1. Architectural Synergy (ViT + MCTF + Memory Bank):</div>
+                    Unlike PatchCore (static CNNs) or ToMe (defect feature collapse), DefectLens embeds an MCTF module between ViT blocks to dynamically prune redundant background tokens while querying normal representations from a FAISS vector index, combining global context with high inference speeds.
+                </div>
+
+                <div class="diff-item">
+                    <div class="item-heading">2. Tri-Fold Fusion Safeguard with Attention Informativeness:</div>
+                    DefectLens enforces a tripartite policy: (i) <i>Cosine Similarity</i> fuses redundant background tokens; (ii) <i>One-Step-Ahead Attention</i> inspects deeper layers to shield informative defect tokens; (iii) <i>Token Size Penalty</i> prevents representation collapse and preserves localization fidelity.
+                </div>
+
+                <div class="diff-item">
+                    <div class="item-heading">3. Full End-to-End Production System:</div>
+                    Unlike theoretical research scripts, DefectLens delivers a full production stack featuring a FastAPI backend and an interactive React Automated Optical Inspection dashboard with real-time heatmap visualization.
+                </div>
+
+                <div class="conclusion-block">
+                    <h2>V. Conclusion</h2>
+                    <p>
+                        DefectLens establishes an efficient, high-throughput visual anomaly detection pipeline for smart manufacturing. By replacing rigid patch extraction with Multi-Criteria Token Fusion, the framework bridges the accuracy-efficiency divide in Automated Optical Inspection.
+                    </p>
+                </div>
+
+                <h2>References</h2>
+                <ol class="references">
+                    <li>K. Roth, L. Pemula, J. Zepeda, B. Schölkopf, T. Brox, and P. Gehler, "Towards Total Recall in Industrial Anomaly Detection," in <i>Proc. IEEE/CVF CVPR</i>, pp. 14318–14328, 2022.</li>
+                    <li>P. Bergmann, M. Fauser, D. Sattlegger, and C. Steger, "MVTec AD — A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection," in <i>Proc. IEEE/CVF CVPR</i>, pp. 9592–9600, 2019.</li>
+                    <li>T. Defard, A. Setkov, A. Loesch, and R. Audigier, "PaDiM: a Patch Distribution Modeling Framework for Anomaly Detection and Localization," in <i>Proc. ICPR</i>, pp. 475–489, 2020.</li>
+                    <li>S. Lee, J. Choi, and H. J. Kim, "Multi-criteria Token Fusion with One-step-ahead Attention for Efficient Vision Transformers," in <i>Proc. IEEE/CVF CVPR</i>, pp. 15724–15733, 2024.</li>
+                    <li>D. Bolya, C. Y. Fu, X. Dai, P. Zhang, C. Feichtenhofer, and J. Hoffman, "Token Merging: Your ViT But Faster," in <i>Proc. ICLR</i>, 2023.</li>
+                    <li>Z. You, L. Cui, Y. Shen, Z. Yang, X. Zheng, X. Le, Y. Peng, and W. Chen, "A Unified Model for Multi-Class Anomaly Detection," in <i>Adv. Neural Inf. Process. Syst. (NeurIPS)</i>, vol. 35, pp. 4571–4584, 2022.</li>
+                    <li>J. Yu, Y. Zheng, X. Wang, W. Li, Y. Wu, R. Zhao, and C. Wu, "FastFlow: Unsupervised Anomaly Detection and Localization via 2D Normalizing Flows," <i>arXiv:2111.07677</i>, 2021.</li>
+                    <li>H. Deng and X. Li, "Anomaly Detection via Reverse Distillation from One-Class Embedding," in <i>Proc. IEEE/CVF CVPR</i>, pp. 9737–9746, 2022.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Camera, Activity, BarChart2, Zap, Settings, Play, Image as ImageIcon, Upload } from 'lucide-react';
+import BenchmarkDashboard from './components/BenchmarkDashboard';
+import InspectionHistory from './components/InspectionHistory';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 
@@ -13,6 +15,8 @@ function App() {
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [deduplicate, setDeduplicate] = useState(true);
 
   useEffect(() => {
     axios.get(`${API_BASE}/categories`).then(res => {
@@ -46,11 +50,70 @@ function App() {
     try {
       const res = await axios.post(`${API_BASE}/predict`, formData);
       setResult(res.data);
+
+      const defaultThresholds = { bottle: 0.69, cable: 0.88, metal_nut: 0.89 };
+      const currentThreshold = res.data.threshold || defaultThresholds[selectedCategory] || 0.70;
+
+      const record = {
+        id: `${file.name}_${selectedCategory}_${selectedModel}`,
+        fileName: file.name,
+        category: selectedCategory,
+        model: selectedModel,
+        prediction: res.data.prediction,
+        anomalyScore: res.data.anomaly_score,
+        threshold: currentThreshold,
+        inferenceMs: res.data.inference_ms,
+        tokenReductionPercent: res.data.token_reduction_percent,
+        timestamp: new Date().toLocaleTimeString(),
+        images: res.data.images,
+        preview: preview
+      };
+
+      setHistory(prev => {
+        if (deduplicate) {
+          // If already in list with same filename, category, and model, replace with latest
+          const exists = prev.some(item => item.id === record.id);
+          if (exists) {
+            return [record, ...prev.filter(item => item.id !== record.id)];
+          }
+          return [record, ...prev];
+        } else {
+          // Add as a new entry with unique timestamped id
+          return [{ ...record, id: `${record.id}_${Date.now()}` }, ...prev];
+        }
+      });
+
     } catch (err) {
       console.error(err);
       alert('Inference failed. Check console.');
     }
     setLoading(false);
+  };
+
+  const handleSelectRecord = (record) => {
+    setResult({
+      prediction: record.prediction,
+      anomaly_score: record.anomalyScore,
+      threshold: record.threshold,
+      inference_ms: record.inferenceMs,
+      original_tokens: 196,
+      reduced_tokens: Math.round(196 * (1 - record.tokenReductionPercent / 100)),
+      token_reduction_percent: record.tokenReductionPercent,
+      images: record.images
+    });
+    setSelectedCategory(record.category);
+    setSelectedModel(record.model);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleRemoveRecord = (id) => {
+    setHistory(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleClearHistory = () => {
+    if (window.confirm('Clear current inspection session history?')) {
+      setHistory([]);
+    }
   };
 
   return (
@@ -75,151 +138,154 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 w-full max-w-7xl mx-auto p-6 animate-fade-in">
         {activeTab === 'inspection' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            {/* Sidebar Controls */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="bg-dark-card/50 backdrop-blur-sm p-6 rounded-2xl border border-dark-border shadow-sm animate-slide-up">
-                <div className="flex items-center gap-2 mb-6">
-                  <Settings className="w-4 h-4 text-primary" />
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-dark-muted">Configuration</h2>
-                </div>
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               
-                <div className="mb-5">
-                  <label className="block text-xs font-medium text-dark-muted uppercase tracking-wider mb-2">Category</label>
-                  <div className="relative">
+              {/* Sidebar Controls */}
+              <div className="lg:col-span-4 space-y-6">
+                <div className="bg-dark-card/50 backdrop-blur-sm p-6 rounded-2xl border border-dark-border shadow-sm animate-slide-up">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Settings className="w-4 h-4 text-primary" />
+                    <h2 className="text-sm font-semibold uppercase tracking-wider text-dark-muted">Configuration</h2>
+                  </div>
+                
+                  <div className="mb-5">
+                    <label className="block text-xs font-medium text-dark-muted uppercase tracking-wider mb-2">Category</label>
+                    <div className="relative">
+                      <select 
+                        value={selectedCategory} 
+                        onChange={e => setSelectedCategory(e.target.value)}
+                        className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-sm text-white appearance-none outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                      >
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        {categories.length === 0 && <option value="bottle">bottle (Default)</option>}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block text-xs font-medium text-dark-muted uppercase tracking-wider mb-2">Model Pipeline</label>
                     <select 
-                      value={selectedCategory} 
-                      onChange={e => setSelectedCategory(e.target.value)}
+                      value={selectedModel} 
+                      onChange={e => setSelectedModel(e.target.value)}
                       className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-sm text-white appearance-none outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                     >
-                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                      {categories.length === 0 && <option value="bottle">bottle (Default)</option>}
+                      <option value="mctf">Efficient ViT (MCTF)</option>
+                      <option value="baseline">Standard ViT (Baseline)</option>
                     </select>
                   </div>
-                </div>
 
-                <div className="mb-6">
-                  <label className="block text-xs font-medium text-dark-muted uppercase tracking-wider mb-2">Model Pipeline</label>
-                  <select 
-                    value={selectedModel} 
-                    onChange={e => setSelectedModel(e.target.value)}
-                    className="w-full bg-dark-bg border border-dark-border rounded-lg p-3 text-sm text-white appearance-none outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                  <div className="mb-6">
+                    <label className="block text-xs font-medium text-dark-muted uppercase tracking-wider mb-2">Input Image</label>
+                    <label className="flex flex-col items-center justify-center w-full h-32 bg-dark-bg border border-dark-border border-dashed rounded-xl cursor-pointer hover:bg-dark-border/50 hover:border-primary/50 transition-all duration-300 group">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-6 h-6 mb-3 text-dark-muted group-hover:text-primary transition-colors" />
+                        <p className="text-sm font-medium text-dark-muted group-hover:text-white transition-colors">
+                          {file ? file.name : 'Select image to inspect'}
+                        </p>
+                      </div>
+                      <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                    </label>
+                  </div>
+
+                  <button 
+                    onClick={handleInspect}
+                    disabled={!file || loading}
+                    className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-3 px-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all duration-300"
                   >
-                    <option value="mctf">Efficient ViT (MCTF)</option>
-                    <option value="baseline">Standard ViT (Baseline)</option>
-                  </select>
+                    {loading ? <Activity className="animate-spin w-4 h-4"/> : <Play className="w-4 h-4"/>}
+                    {loading ? 'Analyzing...' : 'Run Inspection'}
+                  </button>
                 </div>
-
-                <div className="mb-6">
-                  <label className="block text-xs font-medium text-dark-muted uppercase tracking-wider mb-2">Input Image</label>
-                  <label className="flex flex-col items-center justify-center w-full h-32 bg-dark-bg border border-dark-border border-dashed rounded-xl cursor-pointer hover:bg-dark-border/50 hover:border-primary/50 transition-all duration-300 group">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-6 h-6 mb-3 text-dark-muted group-hover:text-primary transition-colors" />
-                      <p className="text-sm font-medium text-dark-muted group-hover:text-white transition-colors">Select image to inspect</p>
-                    </div>
-                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                  </label>
-                </div>
-
-                <button 
-                  onClick={handleInspect}
-                  disabled={!file || loading}
-                  className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-3 px-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all duration-300"
-                >
-                  {loading ? <Activity className="animate-spin w-4 h-4"/> : <Play className="w-4 h-4"/>}
-                  {loading ? 'Analyzing...' : 'Run Inspection'}
-                </button>
               </div>
-            </div>
 
-            {/* Results Area */}
-            <div className="lg:col-span-8 space-y-6">
-              
-              {/* Metrics */}
-              {result && (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                  <div className={`p-5 rounded-2xl border flex flex-col justify-center relative overflow-hidden ${result.prediction === 'normal' ? 'bg-status-normal/5 border-status-normal/30' : 'bg-status-anomaly/5 border-status-anomaly/30'}`}>
-                    <div className={`absolute top-0 right-0 w-16 h-16 blur-2xl rounded-full opacity-20 ${result.prediction === 'normal' ? 'bg-status-normal' : 'bg-status-anomaly'}`}></div>
-                    <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest mb-1 z-10">Prediction</span>
-                    <span className={`text-2xl font-bold uppercase tracking-tight z-10 ${result.prediction === 'normal' ? 'text-status-normal' : 'text-status-anomaly'}`}>{result.prediction}</span>
-                  </div>
-                  <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border p-5 rounded-2xl flex flex-col justify-center">
-                    <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest flex items-center gap-1.5 mb-1"><Activity className="w-3.5 h-3.5"/> Score</span>
-                    <span className="text-2xl font-bold tracking-tight text-white">{result.anomaly_score.toFixed(3)}</span>
-                  </div>
-                  <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border p-5 rounded-2xl flex flex-col justify-center">
-                    <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest flex items-center gap-1.5 mb-1"><Zap className="w-3.5 h-3.5"/> Latency</span>
-                    <span className="text-2xl font-bold tracking-tight text-white">{result.inference_ms.toFixed(1)} <span className="text-sm font-normal text-dark-muted">ms</span></span>
-                  </div>
-                  <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border p-5 rounded-2xl flex flex-col justify-center">
-                    <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest flex items-center gap-1.5 mb-1"><BarChart2 className="w-3.5 h-3.5"/> Token Reduction</span>
-                    <span className="text-2xl font-bold tracking-tight text-primary">{result.token_reduction_percent.toFixed(1)}<span className="text-sm font-normal">%</span></span>
-                  </div>
-                </div>
-              )}
-
-              {/* Visualizations */}
-              <div className={`bg-dark-card/30 backdrop-blur-sm border border-dark-border rounded-2xl overflow-hidden min-h-[480px] flex items-center justify-center p-8 shadow-sm ${result ? 'animate-slide-up' : 'animate-fade-in'}`} style={{ animationDelay: result ? '0.2s' : '0s' }}>
-                {!preview && !result && (
-                  <div className="text-dark-muted flex flex-col items-center">
-                    <div className="w-20 h-20 bg-dark-bg rounded-full flex items-center justify-center mb-6 border border-dark-border shadow-inner">
-                      <ImageIcon className="w-8 h-8 opacity-50" />
-                    </div>
-                    <p className="text-sm font-medium">Awaiting inspection image...</p>
-                  </div>
-                )}
+              {/* Results Area */}
+              <div className="lg:col-span-8 space-y-6">
                 
-                {preview && !result && (
-                  <img src={preview} alt="Preview" className="max-h-[500px] object-contain rounded-xl border border-dark-border/50 shadow-2xl animate-fade-in" />
-                )}
-
+                {/* Metrics */}
                 {result && (
-                  <div className="grid grid-cols-2 gap-6 w-full animate-fade-in">
-                    <div className="flex flex-col gap-3 group">
-                      <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Original</span>
-                      <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img alt="Original" src={`data:image/png;base64,${result.images.original}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
-                      </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                    <div className={`p-5 rounded-2xl border flex flex-col justify-center relative overflow-hidden ${result.prediction === 'normal' ? 'bg-status-normal/5 border-status-normal/30' : 'bg-status-anomaly/5 border-status-anomaly/30'}`}>
+                      <div className={`absolute top-0 right-0 w-16 h-16 blur-2xl rounded-full opacity-20 ${result.prediction === 'normal' ? 'bg-status-normal' : 'bg-status-anomaly'}`}></div>
+                      <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest mb-1 z-10">Prediction</span>
+                      <span className={`text-2xl font-bold uppercase tracking-tight z-10 ${result.prediction === 'normal' ? 'text-status-normal' : 'text-status-anomaly'}`}>{result.prediction}</span>
                     </div>
-                    <div className="flex flex-col gap-3 group">
-                      <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Heatmap</span>
-                      <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img alt="Heatmap" src={`data:image/png;base64,${result.images.heatmap}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
-                      </div>
+                    <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border p-5 rounded-2xl flex flex-col justify-center">
+                      <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest flex items-center gap-1.5 mb-1"><Activity className="w-3.5 h-3.5"/> Score</span>
+                      <span className="text-2xl font-bold tracking-tight text-white">{result.anomaly_score.toFixed(3)}</span>
                     </div>
-                    <div className="flex flex-col gap-3 group">
-                      <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Overlay</span>
-                      <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img alt="Overlay" src={`data:image/png;base64,${result.images.overlay}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
-                      </div>
+                    <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border p-5 rounded-2xl flex flex-col justify-center">
+                      <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest flex items-center gap-1.5 mb-1"><Zap className="w-3.5 h-3.5"/> Latency</span>
+                      <span className="text-2xl font-bold tracking-tight text-white">{result.inference_ms.toFixed(1)} <span className="text-sm font-normal text-dark-muted">ms</span></span>
                     </div>
-                    <div className="flex flex-col gap-3 group">
-                      <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Suspicious Region</span>
-                      <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
-                        <img alt="Suspicious region" src={`data:image/png;base64,${result.images.region}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
-                      </div>
+                    <div className="bg-dark-card/50 backdrop-blur-sm border border-dark-border p-5 rounded-2xl flex flex-col justify-center">
+                      <span className="text-xs font-semibold uppercase text-dark-muted tracking-widest flex items-center gap-1.5 mb-1"><BarChart2 className="w-3.5 h-3.5"/> Token Reduction</span>
+                      <span className="text-2xl font-bold tracking-tight text-primary">{result.token_reduction_percent.toFixed(1)}<span className="text-sm font-normal">%</span></span>
                     </div>
                   </div>
                 )}
+
+                {/* Visualizations */}
+                <div className={`bg-dark-card/30 backdrop-blur-sm border border-dark-border rounded-2xl overflow-hidden min-h-[480px] flex items-center justify-center p-8 shadow-sm ${result ? 'animate-slide-up' : 'animate-fade-in'}`} style={{ animationDelay: result ? '0.2s' : '0s' }}>
+                  {!preview && !result && (
+                    <div className="text-dark-muted flex flex-col items-center">
+                      <div className="w-20 h-20 bg-dark-bg rounded-full flex items-center justify-center mb-6 border border-dark-border shadow-inner">
+                        <ImageIcon className="w-8 h-8 opacity-50" />
+                      </div>
+                      <p className="text-sm font-medium">Awaiting inspection image...</p>
+                    </div>
+                  )}
+                  
+                  {preview && !result && (
+                    <img src={preview} alt="Preview" className="max-h-[500px] object-contain rounded-xl border border-dark-border/50 shadow-2xl animate-fade-in" />
+                  )}
+
+                  {result && (
+                    <div className="grid grid-cols-2 gap-6 w-full animate-fade-in">
+                      <div className="flex flex-col gap-3 group">
+                        <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Original</span>
+                        <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
+                          <img alt="Original" src={`data:image/png;base64,${result.images.original}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-3 group">
+                        <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Heatmap</span>
+                        <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
+                          <img alt="Heatmap" src={`data:image/png;base64,${result.images.heatmap}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-3 group">
+                        <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Overlay</span>
+                        <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
+                          <img alt="Overlay" src={`data:image/png;base64,${result.images.overlay}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-3 group">
+                        <span className="text-xs font-semibold text-dark-muted uppercase tracking-widest pl-1">Suspicious Region</span>
+                        <div className="rounded-xl border border-dark-border overflow-hidden relative shadow-lg group-hover:border-primary/30 transition-colors">
+                          <img alt="Suspicious region" src={`data:image/png;base64,${result.images.region}`} className="w-full object-cover transform group-hover:scale-[1.02] transition-transform duration-500" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+
+            {/* Live Session Inspection Log & Real-Time Analytics */}
+            <InspectionHistory
+              history={history}
+              onSelectRecord={handleSelectRecord}
+              onRemoveRecord={handleRemoveRecord}
+              onClearHistory={handleClearHistory}
+              deduplicate={deduplicate}
+              onToggleDeduplicate={setDeduplicate}
+            />
           </div>
         )}
 
         {activeTab === 'benchmark' && (
-          <div className="bg-dark-card/30 backdrop-blur-sm border border-dark-border p-12 rounded-2xl text-center shadow-sm animate-fade-in max-w-3xl mx-auto mt-10">
-            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner border border-primary/20">
-              <BarChart2 className="w-10 h-10 text-primary" />
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight mb-4 text-white">Benchmark Dashboard</h2>
-            <p className="text-dark-muted text-lg mb-10 leading-relaxed">
-              Run automated evaluations on the entire dataset to compare Baseline ViT vs MCTF across AUROC, latency, and FLOPs.
-            </p>
-            <div className="p-6 bg-dark-bg border border-dark-border border-dashed rounded-xl inline-block">
-               <span className="text-sm font-medium text-dark-muted">(Charts populated from results/summary.csv)</span>
-            </div>
-          </div>
+          <BenchmarkDashboard categories={categories.length > 0 ? categories : ['bottle']} />
         )}
       </main>
     </div>

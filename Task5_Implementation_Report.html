@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE411 Task 5: Implementation Part 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; line-height: 1.6; color: #333; font-size: 18px; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3 { color: #000000; }
+        h1 { text-align: center; padding-bottom: 10px; }
+        h2 { break-before: page; page-break-before: always; }
+        .project-info h2 { break-before: auto; page-break-before: auto; }
+        .project-info { background: #f4f7f6; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .project-info p { margin: 5px 0; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e1e4e8; overflow-x: auto; }
+        pre code { background: transparent; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #000000; color: white; }
+        .figure { text-align: center; margin: 30px 0; }
+        .figure img { max-width: 100%; border: 1px solid #ddd; border-radius: 8px; }
+        .figure-caption { font-style: italic; color: #555; margin-top: 10px; }
+        .alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; }
+        .alert-info { color: #31708f; background-color: #d9edf7; border-color: #bce8f1; }
+        .grid-img { display: flex; gap: 10px; justify-content: center; }
+        .grid-img img { width: 45%; }
+    </style>
+</head>
+<body>
+
+<h1>CSE411 – Computer Vision<br>Project Task 5: Implementation – Part 2</h1>
+
+<div class="project-info">
+    <h2>1. PROJECT INFORMATION</h2>
+    <p><strong>Project Title:</strong> DefectLens: Efficient ViT-Based Anomaly Detection with Multi-Criteria Token Fusion (MCTF)</p>
+    <p><strong>Team Number:</strong> Team 7</p>
+    <p><strong>Team Members:</strong></p>
+    <ul>
+        <li>Sachin Singh – 2023bcs0064</li>
+        <li>Tanish Babu – 2023bcs0067</li>
+        <li>Ali Mohammed Maaz Mohammed Ashraf – 2023bcs0202</li>
+        <li>Chinmoy Das – 2023bcs0052</li>
+    </ul>
+</div>
+
+<h2>2. PROJECT OVERVIEW</h2>
+<p>The <strong>DefectLens</strong> project is a visual anomaly detection system for identifying manufacturing defects. We are using a <strong>Vision Transformer (ViT)</strong> combined with a PatchCore-style FAISS memory bank. To improve efficiency, we added a <strong>Multi-Criteria Token Fusion (MCTF)</strong> module that dynamically merges redundant background tokens, which helps reduce inference latency and FLOPs while maintaining accuracy.</p>
+<p><strong>Task 5 Part 2 Focus:</strong> Building on the data pipelines and core MCTF logic from Part 1, we are now at approximately <strong>50% overall implementation</strong>. We have integrated the FAISS memory bank for anomaly scoring, completed the prediction script (which outputs heatmaps and scores), and set up the FastAPI backend to serve these predictions via a REST API.</p>
+
+<h2>3. COMPLETE PROPOSED METHODOLOGY</h2>
+<p>The complete proposed pipeline operates as follows:</p>
+<p><strong>Dataset &rarr; Data Preprocessing &rarr; [ViT Feature Extraction] &rarr; [MCTF Token Reduction] &rarr; [FAISS Memory Bank Matching] &rarr; [Final Output/Evaluation] &rarr; [Backend API & Frontend UI]</strong></p>
+
+<div class="alert alert-info">
+    <strong>Implemented up to Task 5 Part 2 (Approx 50%):</strong><br>
+    Dataset Access, Preprocessing pipelines, ViT Backbone Integration, MCTF Token Fusion logic, FAISS Memory Bank construction, Anomaly Distance Scoring (Prediction logic), Heatmap back-projection, and FastAPI Backend Server implementation.
+</div>
+
+<div class="alert alert-info" style="background-color: #fcf8e3; border-color: #faebcc; color: #8a6d3b;">
+    <strong>Remaining for later stages (50% to 100%):</strong><br>
+    Comprehensive AUROC/Latency performance evaluation across the full MVTec dataset, React Frontend UI dashboard, live camera streaming integration, and final system deployment/reporting.
+</div>
+
+<h2>4. DATASET & PREPROCESSING RECAP</h2>
+<p>The system utilizes the <strong>MVTec AD</strong> dataset. In the previous phase, we implemented automated downloading, loading, and Torchvision preprocessing (resizing to 224x224 and ImageNet normalization). This infrastructure is actively utilized by our new memory bank and prediction modules.</p>
+
+
+<h2>5. IMPLEMENTATION OF APPROXIMATELY 50% OF THE METHODOLOGY</h2>
+<p>We have integrated our core models into a working backend. The major completed modules for this milestone are:</p>
+
+<h3>Module 1: FAISS Memory Bank & Anomaly Scoring</h3>
+<ul>
+    <li><strong>Objective:</strong> To store core-set sampled "normal" features and compute K-Nearest Neighbor distances for test images to identify anomalies.</li>
+    <li><strong>Implementation Status:</strong> <code>PatchCoreAnomalyDetector</code> implemented and actively functioning via <code>predict.py</code>.</li>
+</ul>
+
+<p><strong>Code Snippet 1 – Prediction Engine (<code>scripts/predict.py</code>)</strong></p>
+<pre><code>with torch.no_grad():
+    # Forward pass through ViT with MCTF token reduction
+    feat, mapping = model.extract_patch_features(img_tensor, layer_idx=layer_idx)
+    
+    # Distance calculation against FAISS memory bank
+    anomaly_map, image_score = detector.predict(feat, mapping, patch_grid_size=grid_size)
+
+# Compute metrics
+inference_ms = (time.perf_counter() - start_time) * 1000
+reduction_pct = (1.0 - feat.shape[1] / model.num_patches) * 100
+</code></pre>
+<p><em>Purpose &rarr; How it works &rarr; Expected output:</em> This script passes the image through the ViT, uses MCTF to reduce the number of tokens, and queries the FAISS index to create a pixel-level anomaly map. It outputs a prediction score and a localized defect heatmap.</p>
+
+<div class="figure">
+    <img src="real_screenshot_predict.png" alt="Prediction Script Execution">
+    <div class="figure-caption"><strong>Figure 1. Execution of the anomaly prediction script.</strong> This terminal output shows the model classifying a sample, calculating the anomaly score (21.3), processing in ~57ms, and successfully achieving an 88.3% token reduction via MCTF.</div>
+</div>
+
+<h3>Module 2: FastAPI Backend Server</h3>
+<ul>
+    <li><strong>Objective:</strong> To wrap the PyTorch inference engine in a REST API, allowing external clients (like our upcoming React frontend) to send images and receive prediction data.</li>
+    <li><strong>Implementation Status:</strong> Core endpoints developed in <code>backend/app/main.py</code>.</li>
+</ul>
+
+<p><strong>Code Snippet 2 – FastAPI Backend Architecture (<code>backend/app/main.py</code>)</strong></p>
+<pre><code>@app.post("/predict")
+async def predict(file: UploadFile = File(...), category: str = Form("bottle"), model_type: str = Form("mctf")):
+    img_pil = Image.open(file.file).convert('RGB')
+    img_tensor = transform(img_pil).unsqueeze(0).to(device)
+    
+    # Inference
+    feat, mapping = model.extract_patch_features(img_tensor, layer_idx=-2)
+    anomaly_map, image_score = detector.predict(feat, mapping, patch_grid_size=14)
+    
+    # Generate Heatmaps
+    vis = generate_heatmap(anomaly_map[0], img_np)
+    
+    return JSONResponse({
+        "prediction": "anomalous" if image_score.item() > 25.0 else "normal",
+        "anomaly_score": float(image_score.item()),
+        "token_reduction_percent": float(reduction_pct),
+        "images": { "heatmap": image_to_base64(vis['heatmap']) }
+    })
+</code></pre>
+<p><em>Purpose &rarr; How it works &rarr; Expected output:</em> The FastAPI server handles incoming HTTP <code>POST</code> requests with image files, executes the model inference in memory, converts the output heatmaps to Base64, and returns a comprehensive JSON payload. This decouples our PyTorch logic from the user interface.</p>
+
+<div class="figure">
+    <img src="real_screenshot_backend_code.png" alt="Backend Code Snapshot">
+    <div class="figure-caption"><strong>Figure 2. FastAPI backend initialization code.</strong> Showing the routing logic designed for our microservice architecture.</div>
+</div>
+
+<div class="figure">
+    <img src="real_screenshot_server.png" alt="FastAPI Server Startup">
+    <div class="figure-caption"><strong>Figure 3. FastAPI server execution.</strong> Demonstrating Uvicorn successfully binding the application to port 8000, ready to serve prediction requests.</div>
+</div>
+
+<h2>6. IMPLEMENTATION OUTPUTS (HEATMAPS)</h2>
+<p>Below are the visual outputs generated by <code>predict.py</code> when run on an image from the MVTec AD testing subset (<code>broken_small</code> category).</p>
+
+<div class="figure grid-img">
+    <img src="outputs/prediction/heatmap.png" alt="Raw Heatmap">
+    <img src="outputs/prediction/overlay.png" alt="Overlay Image">
+</div>
+<div class="figure-caption" style="text-align: center;"><strong>Figure 4. Model Prediction Outputs.</strong> On the left is the raw spatial heatmap generated by back-projecting FAISS distances. On the right is the heatmap successfully overlaid onto the defective image, clearly highlighting the structural damage.</div>
+
+
+<h2>7. CURRENT IMPLEMENTATION STATUS</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Component</th>
+            <th>Status</th>
+            <th>Evidence</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Dataset Collection & Loaders</td>
+            <td>Completed</td>
+            <td><code>dataset.py</code> and active data directories</td>
+        </tr>
+        <tr>
+            <td>MCTF Module & ViT Integration</td>
+            <td>Completed</td>
+            <td><code>mctf.py</code> and 88.3% token reduction verified in logs</td>
+        </tr>
+        <tr>
+            <td>Memory Bank (FAISS)</td>
+            <td>Completed</td>
+            <td><code>build_memory_bank.py</code> & saved <code>.faiss</code> artifacts</td>
+        </tr>
+        <tr>
+            <td>Anomaly Scoring & Heatmaps</td>
+            <td>Completed</td>
+            <td><code>predict.py</code> & resulting output overlay images</td>
+        </tr>
+        <tr>
+            <td>FastAPI Backend</td>
+            <td>Completed</td>
+            <td><code>main.py</code> running successfully on Port 8000</td>
+        </tr>
+        <tr>
+            <td>React Frontend UI</td>
+            <td>Not started</td>
+            <td>Planned for Task 6</td>
+        </tr>
+        <tr>
+            <td>Comprehensive Benchmarking</td>
+            <td>Not started</td>
+            <td>Planned for Final Stage</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>8. REMAINING MAJOR TASKS / MODULES</h2>
+<p>For the remaining 50% of the project, we will focus on the UI and performance testing:</p>
+<ol>
+    <li><strong>Comprehensive Performance Evaluation:</strong> Run the pipeline over the entire MVTec AD dataset (all 15 categories) to calculate AUROC scores. We will compare the Baseline ViT against our MCTF-ViT to document the FLOPs and latency improvements.</li>
+    <li><strong>Frontend Dashboard Development:</strong> Build the React.js application. It will connect to the FastAPI backend and provide a dashboard to view predictions and heatmaps.</li>
+    <li><strong>Edge / Camera Simulation:</strong> Write a script that simulates a continuous camera feed by sending sequential requests to the API to test throughput.</li>
+    <li><strong>Final Polishing & Documentation:</strong> Prepare the final project report and clean up the codebase.</li>
+</ol>
+
+<h2>9. CHALLENGES ENCOUNTERED</h2>
+<ul>
+    <li><strong>Token Re-mapping for Heatmaps:</strong> Generating the visual heatmaps (Figure 4) required precisely mapping the drastically reduced tokens (only 23 tokens left from 196) back to their original 14x14 spatial grid. We resolved this by maintaining an <code>old_to_new</code> coordinate mapping tensor throughout the ViT blocks.</li>
+    <li><strong>Memory Bank Sizing:</strong> Initially, passing all normal features into FAISS consumed too much RAM. We successfully implemented a coreset sampling ratio (currently at 0.1) in <code>anomaly_detector.py</code> to condense the memory bank while maintaining boundary accuracy.</li>
+</ul>
+
+<h2>10. CONCLUSION</h2>
+<p>For Task 5 (Implementation Part 2), Team 7 has reached the 50% implementation mark for DefectLens. We have moved past the initial model setup and now have a working anomaly detection pipeline. The system can build FAISS memory banks, run token-fused predictions with lower latency, generate defect heatmaps, and serve everything through a FastAPI backend. We are now ready to start working on the React frontend and the final dataset benchmarking.</p>
+
+</body>
+</html>

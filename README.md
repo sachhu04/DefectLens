@@ -60,7 +60,8 @@ direnv allow
 ## 10. Dataset Setup
 To automatically download a small subset (e.g., 'bottle') for testing:
 ```bash
-python scripts/download_dataset.py --category bottle
+make download-data CATEGORY=bottle
+# or: python scripts/download_dataset.py --category bottle
 ```
 The script tries a legacy tar.xz mirror first and automatically falls back to a
 Hugging Face mirror (`foersben/mvtec-ad`) that keeps the original MVTec folder
@@ -70,22 +71,38 @@ manually from the MVTec AD official website and place it in `data/mvtec/`.
 ## 11. Building the Memory Bank
 Before running inference, you must extract normal features into the FAISS memory bank:
 ```bash
-# For Baseline ViT
-python scripts/build_memory_bank.py --config configs/baseline.yaml --category bottle
+# Build both baseline and MCTF memory banks for a category
+make build-mb CATEGORY=bottle
 
-# For MCTF ViT
-python scripts/build_memory_bank.py --config configs/mctf.yaml --category bottle
+# Or build individually:
+make build-mb-baseline CATEGORY=bottle
+make build-mb-mctf CATEGORY=bottle
+
+# Or build for all supported categories (bottle, cable, metal_nut):
+make build-mb-all
 ```
 
 ## 12. Running Inference (CLI)
 ```bash
-python scripts/predict.py --image path/to/test.jpg --model mctf --category bottle
+# Default image & mctf model:
+make cli
+
+# Custom image, model, or category:
+make cli IMAGE=data/mvtec/bottle/test/broken_small/000.png MODEL=mctf CATEGORY=bottle
+# or: python scripts/predict.py --image path/to/test.jpg --model mctf --category bottle
 ```
 
-## 13. Running Evaluation
+## 13. Running Evaluation & Tests
 To evaluate AUROC and Latency over the test set:
 ```bash
-python scripts/evaluate.py --config configs/mctf.yaml --category bottle
+make evaluate MODEL=mctf CATEGORY=bottle
+# or: python scripts/evaluate.py --config configs/mctf.yaml --category bottle
+```
+To run the automated test suite and verification pipeline:
+```bash
+make test          # Runs both pytest suite and end-to-end integration test
+make test-unit     # Runs pytest API and pipeline unit tests
+make test-pipeline # Runs full 5-module verification pipeline
 ```
 Results are written to `results/<model>_<category>_eval.json`.
 
@@ -95,18 +112,24 @@ Results are written to `results/<model>_<category>_eval.json`.
 deploy on a different category, re-calibrate: run inference over the test set,
 inspect normal vs. anomalous score distributions, and pick a separating value.
 
-## 14. Running Frontend/Backend
-Start the FastAPI backend:
+## 14. Running Frontend/Backend & Benchmark Dashboard
+You can start both the FastAPI backend and React frontend concurrently with a single command:
 ```bash
-uvicorn backend.app.main:app --reload
+make run
+# or: make ui / ./run.sh
 ```
-Start the React frontend (in another terminal):
+Or start them individually:
 ```bash
-cd frontend
-npm run dev
+# Terminal 1: Backend API (FastAPI on http://localhost:8000)
+make run-backend
+
+# Terminal 2: Frontend Dashboard (Vite + React on http://localhost:5173)
+make run-frontend
 ```
-The frontend expects the API at `http://localhost:8000`; override with the
-`VITE_API_BASE` environment variable if the backend runs elsewhere.
+
+Visit `http://localhost:5173` in your browser:
+- **Inspection Tab:** Interactive visual defect localization with original image, heatmap, overlay, and suspicious region isolation.
+- **Benchmark Tab:** Quantitative performance analytics dashboard with interactive charts (Latency & Throughput, Dynamic Token Pruning Curves, AUROC Retention), side-by-side architectural metrics table, and CSV export.
 
 ## 15. Results
 Measured on MVTec AD `bottle` (209 train / 83 test images, DeiT-Small/16,

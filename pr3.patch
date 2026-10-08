@@ -1,0 +1,141 @@
+diff --git a/.envrc b/.envrc
+new file mode 100644
+index 0000000..9d2e101
+--- /dev/null
++++ b/.envrc
+@@ -0,0 +1,19 @@
++# direnv environment for DefectLens.
++# Requires direnv (https://direnv.net) — macOS (brew install direnv), NixOS,
++# or WSL. Native Windows has no direnv: use WSL, or activate the venv manually
++# (.venv\Scripts\activate on Windows, .venv/bin/activate elsewhere).
++# First use in a fresh clone: `direnv allow`
++
++# 1) NixOS / nix-capable machines: enter the flake devshell
++#    (nodejs + python3 + uv for the frontend and venv bootstrap).
++#    Skipped automatically when nix is not installed (macOS/Windows without nix).
++if command -v nix >/dev/null 2>&1 && [ -f flake.nix ]; then
++    use flake
++fi
++
++# 2) Project Python venv. Kept last so .venv/bin wins over the flake shell's
++#    binaries — all project deps (torch, fastapi, ...) live in .venv.
++if [ -d .venv/bin ]; then
++    PATH_add .venv/bin
++    export VIRTUAL_ENV="$PWD/.venv"
++fi
+diff --git a/.gitignore b/.gitignore
+index 6b2d057..8eafba8 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -50,3 +50,6 @@ frontend/.env*
+ .idea/
+ .vscode/
+ *.swp
++
++# direnv cache
++.direnv/
+diff --git a/README.md b/README.md
+index d764fe2..8a938a9 100644
+--- a/README.md
++++ b/README.md
+@@ -45,9 +45,15 @@ cd DefectLens
+ # Install Python requirements
+ pip install -r requirements.txt
+ 
++# Install the project itself (editable), so `import src.*` / `backend.*` resolve
++pip install -e .
++
+ # Install Frontend requirements
+ cd frontend
+ npm install
++
++# Optional: auto-load this environment on `cd` (requires direnv; NixOS/macOS/WSL)
++direnv allow
+ ```
+ 
+ ## 10. Dataset Setup
+diff --git a/flake.lock b/flake.lock
+new file mode 100644
+index 0000000..379045c
+--- /dev/null
++++ b/flake.lock
+@@ -0,0 +1,27 @@
++{
++  "nodes": {
++    "nixpkgs": {
++      "locked": {
++        "lastModified": 1786106723,
++        "narHash": "sha256-zDSUbpoeo/9ZmD2+wXnzxoo1+uhL8vxc0b8yuYMKYq0=",
++        "owner": "NixOS",
++        "repo": "nixpkgs",
++        "rev": "f13ff45afd1bb73e640eaa08a7066dbed07e3238",
++        "type": "github"
++      },
++      "original": {
++        "owner": "NixOS",
++        "ref": "nixos-unstable",
++        "repo": "nixpkgs",
++        "type": "github"
++      }
++    },
++    "root": {
++      "inputs": {
++        "nixpkgs": "nixpkgs"
++      }
++    }
++  },
++  "root": "root",
++  "version": 7
++}
+diff --git a/flake.nix b/flake.nix
+new file mode 100644
+index 0000000..33543c9
+--- /dev/null
++++ b/flake.nix
+@@ -0,0 +1,37 @@
++{
++  description = "A Python + TS development environment";
++
++  inputs = {
++    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
++  };
++
++  outputs = {
++    self,
++    nixpkgs,
++  }: let
++    supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
++    forEachSupportedSystem = f:
++      nixpkgs.lib.genAttrs supportedSystems (system:
++        f {
++          pkgs = import nixpkgs {inherit system;};
++        });
++  in {
++    devShells = forEachSupportedSystem ({pkgs}: {
++      default = pkgs.mkShell {
++        packages = with pkgs; [
++          nodejs
++          typescript
++          typescript-language-server
++          deno
++          uv
++          python3
++          pyright
++        ];
++
++        shellHook = ''
++          echo "TypeScript development environment loaded!"
++        '';
++      };
++    });
++  };
++}
+diff --git a/requirements.txt b/requirements.txt
+index d0f6821..815416d 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -15,3 +15,4 @@ python-multipart
+ fvcore
+ thop
+ requests
++pillow

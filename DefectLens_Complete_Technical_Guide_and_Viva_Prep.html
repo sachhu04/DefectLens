@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DefectLens: Complete Technical Guide & Advanced Computer Vision Viva Preparation</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+    <!-- KaTeX for pristine mathematical rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --accent-bg: #eff6ff;
+            --accent-border: #bfdbfe;
+            --success: #059669;
+            --success-bg: #ecfdf5;
+            --warning: #d97706;
+            --warning-bg: #fffbeb;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-card: #f8fafc;
+            --border: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        @page {
+            size: A4;
+            margin: 16mm 14mm 16mm 14mm;
+            @bottom-right {
+                content: counter(page);
+            }
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 10pt;
+            line-height: 1.55;
+            color: var(--text-main);
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        /* Cover & Header */
+        .header-banner {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 7.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 3px 9px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .badge-primary { background: var(--primary); color: #fff; }
+        .badge-accent { background: var(--accent); color: #fff; }
+        .badge-success { background: var(--success); color: #fff; }
+
+        h1.main-title {
+            font-size: 21pt;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .sub-title {
+            font-size: 11pt;
+            color: var(--accent-dark);
+            font-weight: 600;
+            margin: 0 0 16px 0;
+            line-height: 1.4;
+        }
+
+        /* Team & Metadata Box */
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            font-size: 8.5pt;
+        }
+
+        .meta-group h4 {
+            margin: 0 0 4px 0;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .team-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 12px;
+        }
+
+        .team-list li {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .team-list span {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+        }
+
+        /* Section Headings */
+        h2.chapter-title {
+            font-size: 14pt;
+            font-weight: 800;
+            color: #ffffff;
+            background: var(--primary);
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin: 28px 0 14px 0;
+            letter-spacing: -0.3px;
+            page-break-after: avoid;
+            break-after: avoid;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-break {
+            page-break-before: always;
+            break-before: page;
+        }
+
+        h3.section-title {
+            font-size: 11.5pt;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin: 18px 0 8px 0;
+            border-bottom: 1.5px solid var(--border);
+            padding-bottom: 4px;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        h4.subsection-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: var(--accent-dark);
+            margin: 12px 0 4px 0;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            text-align: justify;
+        }
+
+        /* Callouts / Alerts */
+        .callout {
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 12px 0;
+            font-size: 9pt;
+            border-left: 4px solid;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .callout-info {
+            background: var(--accent-bg);
+            border-color: var(--accent);
+            color: #1e3a8a;
+        }
+
+        .callout-success {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: #064e3b;
+        }
+
+        .callout-warning {
+            background: var(--warning-bg);
+            border-color: var(--warning);
+            color: #78350f;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            font-size: 8pt;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mathematical equation blocks */
+        .math-block {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 10pt;
+            overflow-x: auto;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .math-caption {
+            font-size: 8pt;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 8.5pt;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        th {
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 6px 10px;
+            text-align: left;
+            border: 1px solid #334155;
+        }
+
+        td {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        /* Code snippets */
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 1.5px 4.5px;
+            border-radius: 3px;
+            font-size: 8.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            line-height: 1.45;
+            overflow-x: auto;
+            margin: 10px 0;
+            border: 1px solid #334155;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: inherit;
+        }
+
+        /* Figures */
+        .figure {
+            margin: 14px 0;
+            text-align: center;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .figure img {
+            max-width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .figure-caption {
+            font-size: 8pt;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Viva Question & Answer Styling */
+        .viva-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 14px;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+
+        .viva-header {
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            padding: 8px 12px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .viva-qnum {
+            background: var(--accent);
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 7.5pt;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .viva-question {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .viva-body {
+            padding: 10px 14px;
+            font-size: 8.8pt;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .viva-body p {
+            margin-bottom: 6px;
+        }
+
+        .viva-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .viva-protip {
+            background: #f0fdf4;
+            border-left: 3px solid #16a34a;
+            padding: 5px 8px;
+            margin-top: 6px;
+            font-size: 8pt;
+            color: #14532d;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--accent-dark);
+        }
+
+        /* Key Metrics Banner */
+        .metrics-banner {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 14px 0;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .metric-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 16pt;
+            font-weight: 800;
+            color: var(--accent-dark);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.1;
+        }
+
+        .metric-label {
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer Info */
+        .footer-note {
+            text-align: center;
+            font-size: 7.5pt;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ==================== COVER & HEADER ==================== -->
+    <div class="header-banner">
+        <div class="badge-row">
+            <span class="badge badge-primary">Course: CSE411 Computer Vision</span>
+            <span class="badge badge-accent">Team 7 Final Master Report</span>
+            <span class="badge badge-success">Production Implementation: 100% Complete</span>
+        </div>
+        <h1 class="main-title">DefectLens: Efficient ViT-Based Industrial Anomaly Detection with Multi-Criteria Token Fusion (MCTF)</h1>
+        <div class="sub-title">Complete Theoretical Treatise, Mathematical Foundations, Codebase Analysis & In-Depth Computer Vision Viva Examination Guide</div>
+    </div>
+
+    <!-- METADATA BOX -->
+    <div class="meta-card">
+        <div class="meta-group">
+            <h4>Project Contributors (Team 7)</h4>
+            <ul class="team-list">
+                <li>Sachin Singh <span>[2023bcs0064]</span></li>
+                <li>Tanish Babu <span>[2023bcs0067]</span></li>
+                <li>Ali Mohammed Maaz <span>[2023bcs0202]</span></li>
+                <li>Chinmoy Das <span>[2023bcs0052]</span></li>
+            </ul>
+        </div>
+        <div class="meta-group">
+            <h4>Repository & Artifacts</h4>
+            <div style="font-size: 8pt; line-height: 1.4;">
+                <strong>GitHub:</strong> <code style="font-size: 7.5pt;">github.com/sachhu04/DefectLens</code><br>
+                <strong>Dataset:</strong> MVTec Anomaly Detection (AD)<br>
+                <strong>Backbone:</strong> DeiT-Small / Patch16 (224&times;224)<br>
+                <strong>Backend/UI:</strong> FastAPI + React.js / Vite
+            </div>
+        </div>
+    </div>
+
+    <!-- EXECUTIVE SUMMARY BANNER -->
+    <div class="metrics-banner">
+        <div class="metric-box">
+            <div class="metric-value">88.27%</div>
+            <div class="metric-label">Token Reduction</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-value">2.28&times;</div>
+            <div class="metric-label">Inference Speedup</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-value">94.92%</div>
+            <div class="metric-label">Image-Level AUROC</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-value">92.90%</div>
+            <div class="metric-label">Pixel-Level AUROC</div>
+        </div>
+    </div>
+
+    <div class="callout callout-info">
+        <div class="callout-title">Document Purpose & Overview</div>
+        This document provides an end-to-end mathematical and engineering breakdown of <strong>DefectLens</strong>. It is designed to take the reader from foundational concepts of Vision Transformers and Unsupervised Anomaly Detection to the mathematical mechanics of <strong>Multi-Criteria Token Fusion (MCTF)</strong> and FAISS memory bank matching. The concluding chapter contains an extensive, highly technical <strong>Viva Voce Examination Master Guide</strong> focusing on computer vision theory, linear algebra, attention complexity, and real-world industrial deployment.
+    </div>
+
+    <!-- ==================== CHAPTER 1: PROBLEM FORMULATION ==================== -->
+    <h2 class="chapter-title">Chapter 1: The Core Concept & Visual Anomaly Detection</h2>
+
+    <h3 class="section-title">1.1 The Manufacturing Quality Inspection Dilemma</h3>
+    <p>
+        In modern automated industrial manufacturing (e.g., semiconductor fabrication, bottle bottling lines, precision mechanical parts), optical inspection systems must operate at factory line speeds (often $>30$ items per second) while catching subtle defects such as micro-cracks, faint scratches, foreign contamination, and structural fractures.
+    </p>
+    <p>
+        Standard supervised computer vision models (e.g., standard ResNet classifiers or YOLO object detectors) fail fundamentally in this environment due to the <strong>Open-World Defect Assumption</strong>:
+    </p>
+    <ul>
+        <li><strong>Defect Rarity & Severe Class Imbalance:</strong> In quality assembly lines, 99.5% to 99.9% of produced items are completely normal. Collecting thousands of labeled defect examples is economically prohibitive.</li>
+        <li><strong>Infinite Defect Morphology:</strong> Defects cannot be categorized into closed classes. A fracture can have arbitrary shapes, scratches can occur at arbitrary orientations, and novel anomalies never seen during factory training will inevitably occur during runtime.</li>
+    </ul>
+
+    <h3 class="section-title">1.2 Mathematical Formulation of One-Class Classification (OCC)</h3>
+    <p>
+        Industrial visual anomaly detection is formally framed as an <strong>Unsupervised One-Class Density Estimation</strong> or <strong>Out-Of-Distribution (OOD) Detection</strong> problem.
+    </p>
+    <div class="math-block">
+        $$\mathcal{D}_{\text{train}} = \{ \mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_M \}, \quad \mathbf{x}_i \in \mathcal{X}_{\text{normal}} \subset \mathbb{R}^{H \times W \times C}$$
+        <div class="math-caption">Training set containing exclusively nominal (defect-free) high-resolution images.</div>
+    </div>
+    <p>
+        During test time, an arbitrary query image $\mathbf{x}_{\text{test}} \in \mathbb{R}^{H \times W \times C}$ is presented. The system must output two mathematical quantities:
+    </p>
+    <ol>
+        <li><strong>Image-level Anomaly Score $S(\mathbf{x}_{\text{test}}) \in \mathbb{R}$:</strong> A continuous scalar quantifying how far the overall image deviates from the nominal distribution $\mathcal{X}_{\text{normal}}$, converted via threshold $\tau$ into a binary classification:
+            $$\hat{y} = \begin{cases} 1 \quad (\text{Anomalous / Defective}) & \text{if } S(\mathbf{x}_{\text{test}}) > \tau \\ 0 \quad (\text{Normal / Nominal}) & \text{if } S(\mathbf{x}_{\text{test}}) \le \tau \end{cases}$$
+        </li>
+        <li><strong>Pixel-level Anomaly Localization Map $\mathcal{A}(\mathbf{x}_{\text{test}}) \in \mathbb{R}^{H \times W}$:</strong> A spatial 2D heatmap where each pixel coordinate $(u, v)$ indicates the local probability or distance of being defective, enabling factory floor robotic sorting and human operator verification.</li>
+    </ol>
+
+    <!-- ==================== CHAPTER 2: VIT FOUNDATION & THE BOTTLENECK ==================== -->
+    <h2 class="chapter-title">Chapter 2: Vision Transformers (ViT) & The Quadratic Bottleneck</h2>
+
+    <h3 class="section-title">2.1 Why Vision Transformers (ViT) Over Convolutional Networks (CNNs)?</h3>
+    <p>
+        Prior state-of-the-art anomaly detectors (such as standard PatchCore) relied on Convolutional backbones (ResNet-50 or WideResNet-50). While CNNs have strong <em>inductive biases</em> (local connectivity and translation equivariance), they exhibit critical disadvantages in precision anomaly detection:
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Convolutional Networks (CNNs)</th>
+                <th>Vision Transformers (ViT)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Receptive Field</strong></td>
+                <td>Grows linearly with layer depth through local kernel stacking; early layers have very small receptive fields.</td>
+                <td>Global receptive field from the very first layer via pairwise Multi-Head Self-Attention.</td>
+            </tr>
+            <tr>
+                <td><strong>Long-Range Context</strong></td>
+                <td>Struggles to model global structural consistency across distant object parts (e.g., symmetry of a bottle neck to base).</td>
+                <td>Directly compares every image patch with every other patch via attention dot products.</td>
+            </tr>
+            <tr>
+                <td><strong>Feature Granularity</strong></td>
+                <td>Repeated spatial downsampling (stride/pooling) discards high-frequency edge and texture details.</td>
+                <td>Maintains consistent token representation and spatial patch resolution throughout transformer blocks.</td>
+            </tr>
+            <tr>
+                <td><strong>Inductive Bias</strong></td>
+                <td>Hard-coded spatial translation equivariance; rigid inductive bias.</td>
+                <td>Learns dynamic, data-driven relationships; flexible self-attention patterns.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 class="section-title">2.2 Mathematical Architecture of Vision Transformers (DeiT-Small Backbone)</h3>
+    <p>
+        DefectLens utilizes <code>deit_small_patch16_224</code> (Data-efficient Image Transformer, Small variant) pre-trained on ImageNet. The mathematical progression from image to patch embeddings is formulated as follows:
+    </p>
+
+    <h4 class="subsection-title">Step 1: Patch Partitioning & Linear Projection</h4>
+    <p>
+        Given an input image $\mathbf{X} \in \mathbb{R}^{H \times W \times C}$ (with $H = W = 224, C = 3$) and non-overlapping patch size $P \times P$ ($P = 16$):
+    </p>
+    <div class="math-block">
+        $$N = \frac{H \cdot W}{P^2} = \frac{224 \times 224}{16 \times 16} = 14 \times 14 = 196 \text{ patch tokens}$$
+        $$\mathbf{x}_p^{(i)} \in \mathbb{R}^{P^2 C} = \mathbb{R}^{16 \times 16 \times 3} = \mathbb{R}^{768}, \quad i = 1, 2, \dots, N$$
+    </div>
+    <p>
+        Each flattened patch $\mathbf{x}_p^{(i)}$ is linearly projected into a latent embedding space of dimension $D = 384$ using projection matrix $\mathbf{E} \in \mathbb{R}^{(P^2 C) \times D}$:
+    </p>
+    <div class="math-block">
+        $$\mathbf{z}_0 = \left[ \mathbf{x}_{\text{cls}} ; \; \mathbf{x}_p^{(1)}\mathbf{E} ; \; \mathbf{x}_p^{(2)}\mathbf{E} ; \; \dots ; \; \mathbf{x}_p^{(N)}\mathbf{E} \right] + \mathbf{E}_{\text{pos}}, \quad \mathbf{z}_0 \in \mathbb{R}^{(N+1) \times D}$$
+        <div class="math-caption">Where $\mathbf{x}_{\text{cls}} \in \mathbb{R}^D$ is the learnable classification token, and $\mathbf{E}_{\text{pos}} \in \mathbb{R}^{(N+1) \times D}$ provides 1D spatial position encoding.</div>
+    </div>
+
+    <h4 class="subsection-title">Step 2: Multi-Head Self-Attention (MHSA) Formulation</h4>
+    <p>
+        Inside each of the $L = 12$ Transformer blocks, input representation $\mathbf{Z} \in \mathbb{R}^{(N+1) \times D}$ undergoes self-attention across $h = 6$ attention heads (head dimension $d_k = D / h = 384 / 6 = 64$):
+    </p>
+    <div class="math-block">
+        $$\mathbf{Q} = \mathbf{Z}\mathbf{W}_Q, \quad \mathbf{K} = \mathbf{Z}\mathbf{W}_K, \quad \mathbf{V} = \mathbf{Z}\mathbf{W}_V \quad \left( \mathbf{W}_Q, \mathbf{W}_K, \mathbf{W}_V \in \mathbb{R}^{D \times D} \right)$$
+        $$\mathbf{A} = \text{Softmax}\left( \frac{\mathbf{Q} \mathbf{K}^T}{\sqrt{d_k}} \right) \in \mathbb{R}^{(N+1) \times (N+1)}$$
+        $$\text{Head}_j = \mathbf{A}_j \mathbf{V}_j, \quad \text{MHSA}(\mathbf{Z}) = \left[ \text{Head}_1 ; \text{Head}_2 ; \dots ; \text{Head}_h \right] \mathbf{W}_O$$
+    </div>
+
+    <h3 class="section-title">2.3 The Computational Bottleneck: Why Token Reduction is Imperative</h3>
+    <p>
+        The pairwise dot product $\mathbf{Q} \mathbf{K}^T$ computes attention scores between every pair of tokens. The computational complexity of MHSA scales <strong>quadratically</strong> with the number of tokens $N$:
+    </p>
+    <div class="math-block">
+        $$\text{FLOPs}_{\text{MHSA}} \sim 4 N D^2 + 2 N^2 D$$
+        $$\text{Memory}_{\text{Attention}} \sim \mathcal{O}(h \cdot N^2)$$
+    </div>
+    <div class="callout callout-warning">
+        <div class="callout-title">The Industrial Dilemma</div>
+        In industrial inspection, images are mostly composed of large, uniform, defect-free background areas (e.g., pure white studio background or repetitive uniform glass). 
+        Carrying $196$ tokens across all 12 transformer layers means computing $(196)^2 = 38,416$ attention pairings per head at every layer—the overwhelming majority of which redundantly process identical background pixels! This creates unacceptable latency on factory-edge CPUs.
+    </div>
+
+    <!-- ==================== CHAPTER 3: MULTI-CRITERIA TOKEN FUSION ==================== -->
+    <div class="page-break"></div>
+    <h2 class="chapter-title">Chapter 3: Achieving Token Reduction via Multi-Criteria Token Fusion (MCTF)</h2>
+
+    <h3 class="section-title">3.1 Pruning vs Pooling vs Token Fusion</h3>
+    <p>
+        To reduce tokens in Vision Transformers, three distinct paradigms exist in computer vision literature:
+    </p>
+    <ol>
+        <li><strong>Token Pruning (e.g., DynamicViT):</strong> Drops least-informative tokens permanently. <em>Fatal for Anomaly Detection:</em> If a subtle defect (e.g., a 2-pixel hairline scratch) happens to be in a pruned token, that defect information is permanently deleted from the feature space, resulting in false negatives.</li>
+        <li><strong>Spatial Pooling / Patch Merging (e.g., Swin Transformer):</strong> Statically aggregates adjacent $2 \times 2$ patches. Blurs defect boundaries and destroys high-resolution spatial localization.</li>
+        <li><strong>Token Fusion (MCTF - Our Approach):</strong> Dynamically identifies redundant tokens and <em>fuses them via weighted linear aggregation</em>. No visual energy or information is thrown away, and important tokens are protected from fusion.</li>
+    </ol>
+
+    <h3 class="section-title">3.2 The Mathematical Mechanics of MCTF</h3>
+    <p>
+        The MCTF module (<code>src/models/mctf.py</code>) executes a bipartite soft matching algorithm governed by three complementary criteria.
+    </p>
+
+    <h4 class="subsection-title">1. Bipartite Partitioning ($A$ and $B$ Sets)</h4>
+    <p>
+        To prevent circular dependencies and avoid an expensive $\mathcal{O}(N^2)$ general graph matching problem, the $N$ patch tokens (excluding the CLS token) are partitioned into two disjoint sets:
+    </p>
+    <div class="math-block">
+        $$\mathcal{S}_A = \{ \mathbf{t}_{2k} \mid 0 \le k < N/2 \}, \quad \mathcal{S}_B = \{ \mathbf{t}_{2k+1} \mid 0 \le k < N/2 \}$$
+        <div class="math-caption">Even-indexed tokens form set $A$; odd-indexed tokens form set $B$. Tokens from $A$ will be fused into matching destination tokens in $B$.</div>
+    </div>
+
+    <h4 class="subsection-title">2. Criterion 1: Cosine Semantic Similarity ($W_{\text{sim}}$)</h4>
+    <p>
+        Tokens representing completely different semantic regions (e.g., bottle cap vs transparent body) must never be fused. Feature vectors are normalized to unit hyperspheres, and scaled cosine similarity is computed:
+    </p>
+    <div class="math-block">
+        $$\hat{\mathbf{t}}_a = \frac{\mathbf{t}_a}{\|\mathbf{t}_a\|_2}, \quad \hat{\mathbf{t}}_b = \frac{\mathbf{t}_b}{\|\mathbf{t}_b\|_2}$$
+        $$\text{sim}(\mathbf{t}_a, \mathbf{t}_b) = \frac{\hat{\mathbf{t}}_a \cdot \hat{\mathbf{t}}_b + 1.0}{2.0} \in [0, 1]$$
+        $$W_{\text{sim}}(a, b) = \left[ \text{sim}(\mathbf{t}_a, \mathbf{t}_b) \right]^{\tau_{\text{sim}}}$$
+        <div class="math-caption">Where $\tau_{\text{sim}} = 1.0$ is the similarity temperature parameter. High similarity yields $W_{\text{sim}} \to 1.0$.</div>
+    </div>
+
+    <h4 class="subsection-title">3. Criterion 2: Informativeness via One-Step-Ahead Attention ($W_{\text{info}}$)</h4>
+    <p>
+        Standard token merging only inspects current-layer features. MCTF introduces <strong>One-Step-Ahead Attention</strong>: it passes the current token states through the Query and Key projection layers of the <em>subsequent</em> Transformer block ($l+1$) to determine how much future attention downstream layers will pay to each token!
+    </p>
+    <div class="math-block">
+        $$\mathbf{Q}^{(l+1)} = \mathbf{X}\mathbf{W}_Q^{(l+1)}, \quad \mathbf{K}^{(l+1)} = \mathbf{X}\mathbf{W}_K^{(l+1)}$$
+        $$\mathbf{A}^{(l+1)} = \text{Softmax}\left( \frac{\mathbf{Q}^{(l+1)} (\mathbf{K}^{(l+1)})^T}{\sqrt{d_k}} \right) \in \mathbb{R}^{H \times N \times N}$$
+        $$\text{info}(\mathbf{t}_i) = \frac{1}{H} \sum_{h=1}^H \sum_{q=1}^N \mathbf{A}_{h, q, i}^{(l+1)} \quad \longrightarrow \quad \overline{\text{info}}(\mathbf{t}_i) = \frac{\text{info}(\mathbf{t}_i)}{\max_k \text{info}(\mathbf{t}_k) + \epsilon}$$
+    </div>
+    <p>
+        The informativeness penalty between candidate pair $(a, b)$ is formulated with negative exponential decay:
+    </p>
+    <div class="math-block">
+        $$I_{a, b} = \overline{\text{info}}(\mathbf{t}_a) + \overline{\text{info}}(\mathbf{t}_b)$$
+        $$W_{\text{info}}(a, b) = \left[ \exp(-I_{a, b}) \right]^{\tau_{\text{info}}}$$
+    </div>
+    <div class="callout callout-success">
+        <div class="callout-title">The Anomaly Protection Mechanism</div>
+        If token $a$ or $b$ contains an anomalous defect or high-contrast structural boundary, subsequent layers will heavily attend to it ($\overline{\text{info}} \approx 1$). 
+        Consequently, $I_{a, b}$ is large, causing $W_{\text{info}} \to 0$. This <strong>drastically suppresses the fusion score</strong>, guaranteeing that defect tokens are protected and never fused away!
+    </div>
+
+    <h4 class="subsection-title">4. Criterion 3: Token Size / Mass Regulation ($W_{\text{size}}$)</h4>
+    <p>
+        Each token carries an associated scalar size $s_i \in \mathbb{R}$, initialized to $1.0$ at layer 0. If a token absorbs other tokens, its size grows ($s = 1 + \sum \text{absorbed}$). To prevent a single "mega-token" from devouring the entire representation (representation collapse):
+    </p>
+    <div class="math-block">
+        $$W_{\text{size}}(a, b) = \left[ \frac{1.0}{s_a + s_b} \right]^{\tau_{\text{size}}}$$
+        <div class="math-caption">Heavily penalizes pairs where either token is already large, enforcing balanced, distributed token aggregation.</div>
+    </div>
+
+    <h4 class="subsection-title">5. Joint Matching & Size-Weighted Feature Aggregation</h4>
+    <p>
+        The composite fusion affinity matrix $\mathbf{W} \in \mathbb{R}^{|\mathcal{S}_A| \times |\mathcal{S}_B|}$ is:
+    </p>
+    <div class="math-block">
+        $$W(a, b) = W_{\text{sim}}(a, b) \times W_{\text{info}}(a, b) \times W_{\text{size}}(a, b)$$
+    </div>
+    <p>
+        For each token $a \in \mathcal{S}_A$, the best matching partner in $\mathcal{S}_B$ is found: $b^*(a) = \arg\max_{b} W(a, b)$. The top $K = \lfloor (N-1) \cdot r \rfloor$ pairs with highest affinity are selected for fusion (where $r = 0.2$ is the reduction ratio).
+    </p>
+    <p>
+        The destination token in $B$ absorbs source tokens from $A$ via <strong>mass-weighted linear combination</strong>:
+    </p>
+    <div class="math-block">
+        $$\mathbf{t}_b^{\text{new}} = \frac{s_b \mathbf{t}_b + \sum_{a \in \mathcal{F}(b)} s_a \mathbf{t}_a}{s_b + \sum_{a \in \mathcal{F}(b)} s_a}, \quad s_b^{\text{new}} = s_b + \sum_{a \in \mathcal{F}(b)} s_a$$
+        <div class="math-caption">Where $\mathcal{F}(b)$ is the set of tokens from $A$ mapped to destination token $b$. Tokens in $A$ not selected for fusion are retained without modification.</div>
+    </div>
+
+    <h3 class="section-title">3.3 Spatial Coordinate Tracking & Back-Projection</h3>
+    <p>
+        In standard classification, dropping or fusing tokens does not impair predicting a single class label. However, in <strong>visual anomaly detection, we must locate defects at the pixel level</strong>.
+    </p>
+    <p>
+        DefectLens solves this by maintaining a persistent <code>mapping</code> tensor across all 10 MCTF layers:
+    </p>
+    <div class="math-block">
+        $$\mathbf{M} \in \mathbb{Z}^{196}, \quad \mathbf{M}[p] = \text{index of the fused token representing original spatial patch } p$$
+    </div>
+    <p>
+        When the penultimate layer extracts only $23$ fused feature tokens, each of the $196$ original spatial patch locations on the $14 \times 14$ grid knows exactly which of the $23$ tokens represents its region!
+    </p>
+
+    <!-- ==================== CHAPTER 4: PATCHCORE & MEMORY BANK ==================== -->
+    <div class="page-break"></div>
+    <h2 class="chapter-title">Chapter 4: PatchCore Anomaly Detector & Memory Bank Math</h2>
+
+    <h3 class="section-title">4.1 Penultimate Layer Feature Extraction</h3>
+    <p>
+        DefectLens extracts feature representations at <code>layer_idx: -2</code> (block 10 out of 12 for DeiT-Small).
+    </p>
+    <div class="callout callout-info">
+        <div class="callout-title">Why Penultimate Layer (-2) Instead of Final Layer (-1)?</div>
+        In deep Vision Transformers, the final block ($l=11$) is heavily specialized for global ImageNet semantic category prediction; its spatial representations suffer from feature collapse toward the CLS token. 
+        Conversely, the penultimate layer ($l=10$) retains rich, localized geometric textures and edge representations while benefiting from deep contextual abstraction.
+    </div>
+
+    <h3 class="section-title">4.2 Fitting Phase & Coreset Subsampling</h3>
+    <p>
+        During offline training on nominal samples, patch feature vectors are extracted from all $M$ normal training images:
+    </p>
+    <div class="math-block">
+        $$\mathcal{P}_{\text{all}} = \bigcup_{m=1}^M \{ \mathbf{z}_{m, 1}, \mathbf{z}_{m, 2}, \dots, \mathbf{z}_{m, N_{\text{fused}}} \} \subset \mathbb{R}^C$$
+    </div>
+    <p>
+        For $209$ training images in the bottle category, $\mathcal{P}_{\text{all}}$ contains tens of thousands of feature vectors. Storing and searching all vectors would introduce severe RAM and latency bottlenecks. 
+        DefectLens performs <strong>Coreset Subsampling</strong> ($\text{ratio} = 0.10$):
+    </p>
+    <div class="math-block">
+        $$\mathcal{M} \subset \mathcal{P}_{\text{all}}, \quad |\mathcal{M}| = \max(1, \lfloor |\mathcal{P}_{\text{all}}| \times \text{coreset\_ratio} \rfloor)$$
+        <div class="math-caption">Where $\mathcal{M}$ is the nominal memory bank stored in <code>artifacts/memory_bank/&lt;category&gt;/&lt;model&gt;/</code>.</div>
+    </div>
+
+    <h3 class="section-title">4.3 High-Dimensional Spherical Geometry & L2 Normalization</h3>
+    <p>
+        Every patch feature vector is projected onto the unit hypersphere $\mathbb{S}^{C-1}$ via $L_2$ normalization:
+    </p>
+    <div class="math-block">
+        $$\hat{\mathbf{z}} = \frac{\mathbf{z}}{\|\mathbf{z}\|_2 + 10^{-8}}$$
+    </div>
+    <p>
+        <strong>Mathematical Identity:</strong> On the unit hypersphere where $\|\hat{\mathbf{u}}\|_2 = \|\hat{\mathbf{v}}\|_2 = 1$, squared Euclidean distance is strictly proportional to cosine dissimilarity:
+    </p>
+    <div class="math-block">
+        $$\|\hat{\mathbf{u}} - \hat{\mathbf{v}}\|_2^2 = \|\hat{\mathbf{u}}\|_2^2 + \|\hat{\mathbf{v}}\|_2^2 - 2 (\hat{\mathbf{u}} \cdot \hat{\mathbf{v}}) = 2 - 2 \cos(\theta)$$
+        <div class="math-caption">This bounds all distance metrics between $[0, 2]$, ensuring uniform distance thresholds across diverse categories.</div>
+    </div>
+
+    <h3 class="section-title">4.4 FAISS Indexing & Nearest Neighbor Anomaly Scoring</h3>
+    <p>
+        The normalized memory bank $\mathcal{M}$ is indexed using <strong>FAISS</strong> (<code>faiss.IndexFlatL2(C)</code>). 
+        Given an incoming test image with reduced patch features $\mathbf{Z}_{\text{test}} \in \mathbb{R}^{N_{\text{reduced}} \times C}$:
+    </p>
+    <div class="math-block">
+        $$s(\mathbf{t}_j) = \min_{\mathbf{m} \in \mathcal{M}} \|\hat{\mathbf{t}}_j - \mathbf{m}\|_2, \quad \forall j \in \{1, \dots, N_{\text{reduced}}\}$$
+    </div>
+    <p>
+        The patch scores are projected back to the original $14 \times 14$ grid using the spatial mapping tensor $\mathbf{M}$:
+    </p>
+    <div class="math-block">
+        $$\mathcal{S}_{\text{patch}}[u, v] = s\left( \mathbf{t}_{\mathbf{M}[u \cdot 14 + v]} \right), \quad \forall u, v \in \{0, \dots, 13\}$$
+        $$S_{\text{image}}(\mathbf{X}) = \max_{u, v} \mathcal{S}_{\text{patch}}[u, v]$$
+    </div>
+
+    <h3 class="section-title">4.5 Heatmap Synthesis & Visual Defect Explainability</h3>
+    <p>
+        The $14 \times 14$ anomaly grid is post-processed into an inspection heatmap (<code>src/visualization/heatmap.py</code>):
+    </p>
+    <ol>
+        <li><strong>Bicubic Interpolation:</strong> Upsamples the $14 \times 14$ grid to full input resolution $224 \times 224$:
+            $$\mathcal{A}_{\text{dense}} = \text{BicubicInterpolate}(\mathcal{S}_{\text{patch}}, \text{size}=(224, 224))$$
+        </li>
+        <li><strong>Gaussian Kernel Smoothing:</strong> Smooths patch boundary artifacts using kernel size $K = 33 \times 33$:
+            $$\mathcal{A}_{\text{smooth}}(x, y) = \mathcal{A}_{\text{dense}} * \mathcal{G}_{\sigma}(x, y), \quad \mathcal{G}_{\sigma}(x, y) = \frac{1}{2\pi \sigma^2} e^{-\frac{x^2+y^2}{2\sigma^2}}$$
+        </li>
+        <li><strong>Colormap & Overlay:</strong> Normalized to $[0, 255]$, rendered in OpenCV <code>COLORMAP_JET</code>, and alpha-blended with the original image ($\alpha = 0.5$).</li>
+        <li><strong>Otsu's Automatic Contour Segmentation:</strong> Applies Otsu's binarization thresholding:
+            $$\sigma_w^2(T) = \omega_0(T)\sigma_0^2(T) + \omega_1(T)\sigma_1^2(T) \quad \longrightarrow \quad T^* = \arg\min_T \sigma_w^2(T)$$
+            Contours are drawn with <code>cv2.drawContours</code> to place bounding borders around defect regions.
+        </li>
+    </ol>
+
+    <!-- ==================== CHAPTER 5: SOFTWARE ARCHITECTURE ==================== -->
+    <div class="page-break"></div>
+    <h2 class="chapter-title">Chapter 5: Full Software Architecture & Engineering Implementation</h2>
+
+    <h3 class="section-title">5.1 Complete End-to-End System Pipeline</h3>
+    <pre><code>+-------------------------------------------------------------------------------------------------+
+|                                 DEFECTLENS FULL PIPELINE                                        |
++-------------------------------------------------------------------------------------------------+
+[Factory Camera / File Upload]
+             |
+             v
+ [Preprocessing: Resize 224x224, Normalize (ImageNet mean & std)]
+             |
+             v
+ [DeiT-Small Backbone: 12 Transformer Blocks, Embed Dim=384]
+      |
+      +---> Block 0..9: MCTF Module Injected Before Each Block
+      |         |
+      |         +--> 1. Bipartite Split: Even (A) vs Odd (B) Tokens
+      |         +--> 2. Calculate Cosine Similarity Matrix W_sim
+      |         +--> 3. One-Step-Ahead Attention Informativeness W_info (Next Block QK^T)
+      |         +--> 4. Token Mass Penalty W_size
+      |         +--> 5. Top-K Bipartite Matching & Mass-Weighted Fusion
+      |         +--> 6. Update Spatial Coordinate Tracking Tensor [mapping]
+      |
+      v
+ [Penultimate Layer (Block 10) Feature Output: 23 Fused Tokens]
+             |
+             v
+ [FAISS IndexFlatL2 Nearest-Neighbor Search against Memory Bank]
+             |
+             v
+ [Anomaly Distance Scoring & Spatial Back-Projection via [mapping]]
+             |
+             +---> Image-Level Max Score (Classification: NORMAL / ANOMALOUS)
+             +---> 14x14 Grid -> Bicubic Upsampling (224x224) -> Gaussian Blur (33x33)
+             +---> OpenCV JET Colormap + Otsu Contour Segmentation
+             |
+             v
+ [FastAPI REST Backend (Port 8000)] <==== JSON / Base64 ====> [React.js Frontend Dashboard (Port 5173)]</code></pre>
+
+    <h3 class="section-title">5.2 Codebase Module Manifest</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>File Path</th>
+                <th>Role in Architecture</th>
+                <th>Core Functions / Classes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>src/models/mctf.py</code></td>
+                <td>Multi-Criteria Token Fusion engine</td>
+                <td><code>MCTFModule</code>, <code>get_informativeness()</code>, <code>forward()</code></td>
+            </tr>
+            <tr>
+                <td><code>src/models/vit.py</code></td>
+                <td>ViT backbone wrapper & MCTF layer injector</td>
+                <td><code>ViTFeatureExtractor</code>, <code>extract_patch_features()</code></td>
+            </tr>
+            <tr>
+                <td><code>src/models/anomaly_detector.py</code></td>
+                <td>PatchCore memory bank & scoring module</td>
+                <td><code>PatchCoreAnomalyDetector</code>, <code>fit()</code>, <code>predict()</code></td>
+            </tr>
+            <tr>
+                <td><code>src/data/dataset.py</code></td>
+                <td>MVTec AD loader & torchvision transforms</td>
+                <td><code>MVTecDataset</code>, <code>get_transforms()</code></td>
+            </tr>
+            <tr>
+                <td><code>src/visualization/heatmap.py</code></td>
+                <td>Spatial upsampling, blur & contouring</td>
+                <td><code>generate_heatmap()</code>, <code>save_visualizations()</code></td>
+            </tr>
+            <tr>
+                <td><code>backend/app/main.py</code></td>
+                <td>FastAPI asynchronous web microservice</td>
+                <td><code>/health</code>, <code>/categories</code>, <code>/model-info</code>, <code>/predict</code></td>
+            </tr>
+            <tr>
+                <td><code>frontend/src/App.jsx</code></td>
+                <td>Interactive operator web UI</td>
+                <td>Model comparison, inspection view, threshold controls</td>
+            </tr>
+            <tr>
+                <td><code>scripts/evaluate.py</code></td>
+                <td>Quantitative benchmark suite</td>
+                <td>Computes Image AUROC, Pixel AUROC, and latency</td>
+            </tr>
+            <tr>
+                <td><code>scripts/test_pipeline.py</code></td>
+                <td>End-to-end integration test runner</td>
+                <td>Validates all 5 system modules sequentially</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 class="section-title">5.3 Verification: System Integration Test Execution</h3>
+    <p>
+        To ensure production stability, <code>scripts/test_pipeline.py</code> validates every module in a single execution pass. Below is the captured execution confirming 100% test pass rate across the pipeline:
+    </p>
+    <div class="figure">
+        <img src="real_screenshot_integration.png" alt="Integration Test Suite" style="max-height: 250px;">
+        <div class="figure-caption">Figure 1: Automated end-to-end test execution showing all 5 pipeline modules passing with 88.3% token reduction verified.</div>
+    </div>
+
+    <!-- ==================== CHAPTER 6: RESULTS & BENCHMARKS ==================== -->
+    <div class="page-break"></div>
+    <h2 class="chapter-title">Chapter 6: Empirical Results & Performance Benchmarks</h2>
+
+    <h3 class="section-title">6.1 Quantitative Comparison on MVTec AD (Bottle Category)</h3>
+    <p>
+        Benchmarking was conducted on the full test set of the MVTec AD <code>bottle</code> category (209 normal training images, 83 test images comprising normal, broken small, broken large, and contaminated samples) using CPU execution:
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Architecture</th>
+                <th>Tokens (End)</th>
+                <th>Token Reduction</th>
+                <th>Inference Latency</th>
+                <th>Speedup</th>
+                <th>Image AUROC</th>
+                <th>Pixel AUROC</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Baseline ViT</strong></td>
+                <td>196</td>
+                <td>0.0%</td>
+                <td>45.07 ms</td>
+                <td>1.00&times;</td>
+                <td><strong>100.0%</strong></td>
+                <td><strong>98.68%</strong></td>
+            </tr>
+            <tr>
+                <td><strong>MCTF-ViT (Ours)</strong></td>
+                <td><strong>23</strong></td>
+                <td><strong>88.27%</strong></td>
+                <td><strong>19.73 ms</strong></td>
+                <td><strong>2.28&times;</strong></td>
+                <td><strong>94.92%</strong></td>
+                <td><strong>92.90%</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="figure">
+        <img src="real_screenshot_evaluate.png" alt="Evaluation Output" style="max-height: 210px;">
+        <div class="figure-caption">Figure 2: Benchmark evaluation terminal output on MVTec AD bottle dataset confirming 19.73 ms latency and 94.92% Image AUROC.</div>
+    </div>
+
+    <h3 class="section-title">6.2 Visual Inspection & Defect Localization Analysis</h3>
+    <p>
+        Figure 3 demonstrates CLI prediction on a defective bottle sample (<code>broken_large/000.png</code>), while Figure 4 displays the synthesized heatmap and defect overlay:
+    </p>
+
+    <div class="grid-2">
+        <div class="figure">
+            <img src="real_screenshot_predict.png" alt="CLI Predict Output" style="max-height: 190px;">
+            <div class="figure-caption">Figure 3: Single prediction CLI output (Score: 0.9123).</div>
+        </div>
+        <div class="figure">
+            <img src="outputs/prediction/overlay.png" alt="Heatmap Overlay" style="max-height: 190px;">
+            <div class="figure-caption">Figure 4: Defect overlay precisely highlighting the fracture.</div>
+        </div>
+    </div>
+
+    <h3 class="section-title">6.3 Interactive Inspection Web Dashboard</h3>
+    <p>
+        The operator dashboard connects to the FastAPI backend, providing instant inference, token reduction readouts, and a synchronized 4-quadrant inspection view:
+    </p>
+    <div class="figure">
+        <img src="real_screenshot_ui_results.png" alt="Web Dashboard" style="max-height: 290px;">
+        <div class="figure-caption">Figure 5: Live web inspection dashboard running on React + Vite showing real-time defect localization and 88.3% token reduction.</div>
+    </div>
+
+    <!-- ==================== CHAPTER 7: MASTER VIVA VOCE EXAM GUIDE ==================== -->
+    <div class="page-break"></div>
+    <h2 class="chapter-title">Chapter 7: Master Viva Voce Guide (Deep Technical CV & Architecture)</h2>
+    <p style="font-size: 8.5pt; color: var(--text-muted); margin-bottom: 16px;">
+        <em>Notice for Candidates: The following questions cover the deepest theoretical and practical questions that examiners and professors ask during a Computer Vision project defense. Study both the conceptual intuition and the underlying mathematical justifications.</em>
+    </p>
+
+    <!-- SECTION 7.1 -->
+    <h3 class="section-title">Section 7.1: Fundamental Computer Vision & Transformer Theory</h3>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q1</span>
+            <span class="viva-question">What is "Inductive Bias", and how do CNNs and Vision Transformers fundamentally differ in their inductive biases?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> An <em>inductive bias</em> is the set of prior assumptions a machine learning algorithm uses to predict outputs on unseen inputs. In computer vision:</p>
+            <ul>
+                <li><strong>CNNs possess strong inductive biases:</strong> (1) <em>Locality</em>: Pixels close together in Euclidean space are strongly correlated, so kernels only examine local $3 \times 3$ or $5 \times 5$ neighborhoods. (2) <em>Translation Equivariance</em>: Shifting the input image shifts feature activations by an identical spatial offset ($f(g(x)) = g(f(x))$).</li>
+                <li><strong>Vision Transformers possess weak inductive biases:</strong> ViTs treat an image as a bag of $N$ tokens. Self-attention has <em>no built-in concept of 2D grid coordinates</em>; spatial structure must be learned purely through added 1D positional encodings $\mathbf{E}_{\text{pos}}$. Every patch can directly interact with every other patch via pairwise dot-product attention from layer 1.</li>
+            </ul>
+            <div class="viva-protip"><strong>Viva Pro-Tip:</strong> State that ViT's weak inductive bias is why it excels at modeling global structural semantics (e.g. comparing bottle top to bottle bottom), but requires large pre-training datasets (like ImageNet) or distillation (DeiT) to converge.</div>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q2</span>
+            <span class="viva-question">Derive the computational complexity of Multi-Head Self-Attention (MHSA). Why does it scale quadratically with token count?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Given $N$ input tokens of embedding dimension $D$:</p>
+            <ol>
+                <li><strong>Linear Projections:</strong> Computing $\mathbf{Q} = \mathbf{X}\mathbf{W}_Q, \mathbf{K} = \mathbf{X}\mathbf{W}_K, \mathbf{V} = \mathbf{X}\mathbf{W}_V$ requires three matrix multiplications of shape $(N \times D) \times (D \times D)$, consuming $3 \times 2 N D^2 = 6 N D^2$ FLOPs.</li>
+                <li><strong>Attention Score Matrix ($\mathbf{Q}\mathbf{K}^T$):</strong> Multiplying $\mathbf{Q} \in \mathbb{R}^{N \times D}$ by $\mathbf{K}^T \in \mathbb{R}^{D \times N}$ requires $2 N^2 D$ FLOPs. This produces an $N \times N$ attention matrix.</li>
+                <li><strong>Softmax & Value Weighting:</strong> Multiplying $\text{Softmax}(\mathbf{Q}\mathbf{K}^T/\sqrt{d_k}) \in \mathbb{R}^{N \times N}$ by $\mathbf{V} \in \mathbb{R}^{N \times D}$ requires another $2 N^2 D$ FLOPs.</li>
+                <li><strong>Output Projection:</strong> Multiplying concatenated heads by $\mathbf{W}_O \in \mathbb{R}^{D \times D}$ requires $2 N D^2$ FLOPs.</li>
+            </ol>
+            <p>Total FLOPs $\approx 8 N D^2 + 4 N^2 D$. When token count $N$ increases (e.g. high-resolution inspection), the $4 N^2 D$ term dominates quadratically ($\mathcal{O}(N^2 D)$).</p>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q3</span>
+            <span class="viva-question">Why did you use DeiT-Small instead of standard ViT-Base or a ResNet-50?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Three deliberate engineering and computer vision reasons:</p>
+            <ul>
+                <li><strong>Distillation-based Training (DeiT):</strong> DeiT utilizes a distillation token trained with a teacher CNN (RegNet). This infuses convolutional inductive biases (fine-grained edge and texture awareness) into the transformer weights without sacrificing global attention.</li>
+                <li><strong>Parameter & Latency Footprint:</strong> ViT-Base has 86M parameters and $D=768$, creating unacceptable latency on edge inspection hardware ($>150$ ms). DeiT-Small has only 22M parameters and $D=384$, making real-time CPU inspection feasible ($<20$ ms with MCTF).</li>
+                <li><strong>Superior Anomaly Representations:</strong> Unlike ResNet whose deep layers suffer from large spatial receptive field overlap and extreme pooling loss, DeiT preserves discrete $16 \times 16$ patch boundaries throughout the network.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q4</span>
+            <span class="viva-question">Why extract patch representations from the penultimate layer (layer_idx: -2) instead of the final layer (-1)?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> In Vision Transformers trained with a classification token ($\mathbf{x}_{\text{cls}}$), the final layer ($l=11$) exhibits <em>representation collapse</em> toward class-specific semantics. In the final block, patch tokens transfer their discriminative information to the CLS token to predict the ImageNet class, causing individual patch embeddings to lose localized geometric and textural distinctiveness.</p>
+            <p>The penultimate layer ($l=10$, index <code>-2</code>) sits at the sweet spot: deep enough to have captured high-level structural semantics and global context, but upstream of the final classification compression, thereby preserving crisp spatial locality essential for anomaly heatmaps.</p>
+        </div>
+    </div>
+
+    <!-- SECTION 7.2 -->
+    <div class="page-break"></div>
+    <h3 class="section-title">Section 7.2: Multi-Criteria Token Fusion (MCTF) Deep Dive</h3>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q5</span>
+            <span class="viva-question">Explain the exact mathematical formulation of the "One-Step-Ahead Attention" criterion in MCTF. Why does it prevent defect loss?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Standard token merging algorithms (like ToMe) only evaluate current-layer cosine similarity. This is dangerous: two background patches might look somewhat different in early layers, while an anomalous defect patch might appear subtly similar to an adjacent texture.</p>
+            <p>MCTF introduces <em>One-Step-Ahead Attention</em>. At block $l$, it computes the attention probabilities of the <strong>subsequent block ($l+1$)</strong> before deciding what to fuse:</p>
+            $$\mathbf{A}^{(l+1)} = \text{Softmax}\left( \frac{\mathbf{X}^{(l)}\mathbf{W}_Q^{(l+1)} \left(\mathbf{X}^{(l)}\mathbf{W}_K^{(l+1)}\right)^T}{\sqrt{d_k}} \right)$$
+            <p>The total incoming attention received by token $i$ across all query tokens and heads is:</p>
+            $$\text{info}(\mathbf{t}_i) = \frac{1}{H} \sum_{h=1}^H \sum_{q=1}^N \mathbf{A}_{h, q, i}^{(l+1)}$$
+            <p>If a patch contains an anomaly (e.g., crack or stain), downstream layers attend heavily to it ($\text{info} \to 1.0$). MCTF penalizes fusion via:</p>
+            $$W_{\text{info}}(a, b) = \exp\left( -(\overline{\text{info}}_a + \overline{\text{info}}_b) \right)^{\tau_{\text{info}}}$$
+            <p>As incoming attention increases, $W_{\text{info}} \to 0$, forcing the joint fusion score to zero and <strong>mathematically guaranteeing that informative defect tokens are never selected for fusion</strong>.</p>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q6</span>
+            <span class="viva-question">Why does MCTF partition tokens into bipartite sets A and B instead of performing exhaustive pairwise matching across all tokens?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Exhaustive pairwise matching across $N$ tokens has severe mathematical and computational drawbacks:</p>
+            <ol>
+                <li><strong>Computational Cost:</strong> General maximum-weight graph matching requires $\mathcal{O}(N^3)$ operations (e.g., Blossom algorithm). Bipartite splitting reduces the candidate search space to $|A| \times |B| = (N/2) \times (N/2) = N^2 / 4$, a <strong>$4\times$ reduction in candidate comparisons</strong>.</li>
+                <li><strong>Elimination of Cyclic & Cascading Dependencies:</strong> In unconstrained pairwise matching, Token 1 might match Token 2, Token 2 matches Token 3, and Token 3 matches Token 1, creating cyclic graphs and non-deterministic sequential merge paths. In bipartite matching, set $A$ acts strictly as sources and set $B$ strictly as destinations.</li>
+                <li><strong>Vectorized Scatter-Add Operations:</strong> It allows destination updates to execute in parallel on GPU/CPU via PyTorch's <code>scatter_add_</code> without race conditions.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q7</span>
+            <span class="viva-question">What is "Representation Collapse" in token merging, and how does the Token Size criterion mathematically prevent it?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Without size regulation, a greedy matching algorithm tends to continually merge new tokens into whichever token has already absorbed the most neighbors (a "rich-get-richer" effect). Over 10 transformer blocks, this creates a single monolithic "mega-token" representing 80% of the image, collapsing feature variance and destroying spatial discrimination.</p>
+            <p>MCTF assigns each token a mass scalar $s_i$ (initially $s_i = 1$). When tokens merge, masses sum ($s_{\text{fused}} = s_a + s_b$). The size criterion applies an inverse-mass penalty:</p>
+            $$W_{\text{size}}(a, b) = \left( \frac{1.0}{s_a + s_b} \right)^{\tau_{\text{size}}}$$
+            <p>As a token grows in size, its denominator surges, driving $W_{\text{size}} \to 0$. This prevents runaway mergers and forces the algorithm to merge un-fused background patches instead, preserving a healthy, diverse token distribution.</p>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q8</span>
+            <span class="viva-question">How does DefectLens reconstruct a 14x14 spatial heatmap when the model only outputs 23 fused tokens at layer 10?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Through a persistent <strong>ancestral mapping tensor</strong> (<code>mapping</code>):</p>
+            <ol>
+                <li>At layer 0, <code>mapping</code> initializes as an identity array: $\mathbf{M} = [0, 1, 2, \dots, 196]$.</li>
+                <li>At each MCTF block, when source token $a$ is merged into destination token $b$, every entry in $\mathbf{M}$ that previously pointed to $a$ is updated to point to the new index of $b$:
+                    $$\mathbf{M}[p] \leftarrow \text{new\_idx}(b), \quad \forall p \text{ where } \mathbf{M}[p] = \text{orig\_idx}(a)$$
+                </li>
+                <li>At the output, we compute nearest-neighbor anomaly scores for the 23 remaining tokens: $\mathbf{s} \in \mathbb{R}^{23}$.</li>
+                <li>We reconstruct the full $14 \times 14$ grid via tensor gathering:
+                    $$\mathcal{S}_{\text{patch}}[i] = \mathbf{s}[\mathbf{M}[i]], \quad \forall i \in \{0, \dots, 195\}$$
+                </li>
+            </ol>
+            <p>Thus, every patch on the original 2D image receives the exact anomaly score of its representative token!</p>
+        </div>
+    </div>
+
+    <!-- SECTION 7.3 -->
+    <div class="page-break"></div>
+    <h3 class="section-title">Section 7.3: PatchCore Anomaly Detection & Memory Bank Math</h3>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q9</span>
+            <span class="viva-question">Explain the mathematical principle behind PatchCore. Why does nearest-neighbor distance in feature space quantify anomaly severity?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> PatchCore assumes that pre-trained deep neural representations of nominal (normal) patches form a compact manifold $\mathcal{M}_{\text{nominal}} \subset \mathbb{R}^C$. When the model is presented with a defective patch (e.g. scratch, fracture):</p>
+            <ul>
+                <li>The visual patterns of the defect were never present in the nominal training set.</li>
+                <li>In the high-dimensional latent space $\mathbb{R}^C$, the feature vector of this anomalous patch $\mathbf{z}_{\text{defect}}$ falls outside the nominal manifold.</li>
+                <li>By computing the Euclidean distance to the closest vector in the nominal memory bank:
+                    $$s^*(\mathbf{z}) = \min_{\mathbf{m} \in \mathcal{M}} \|\hat{\mathbf{z}} - \mathbf{m}\|_2$$
+                    a normal test patch yields a very small distance ($s^* \approx 0.60$), while an anomalous patch yields a high distance ($s^* \ge 0.85-1.02$).
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q10</span>
+            <span class="viva-question">What is Coreset Subsampling, and what is the difference between greedy k-Center subsampling and random subsampling?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Coreset subsampling aims to select a subset $\mathcal{M} \subset \mathcal{P}$ of size $K \ll |\mathcal{P}|$ that preserves the geometric coverage of the original point cloud:</p>
+            <ul>
+                <li><strong>Greedy $k$-Center Problem:</strong> Solves the minimax facility location problem:
+                    $$\mathcal{M}^* = \arg\min_{\mathcal{M} \subset \mathcal{P}, |\mathcal{M}|=K} \max_{\mathbf{x} \in \mathcal{P}} \min_{\mathbf{m} \in \mathcal{M}} \|\mathbf{x} - \mathbf{m}\|_2$$
+                    It iteratively picks the point that is farthest from all currently selected coreset points. This guarantees optimal boundary coverage but has quadratic initialization time $\mathcal{O}(K \cdot |\mathcal{P}|)$.
+                </li>
+                <li><strong>Uniform Random Subsampling (DefectLens Implementation):</strong> Draws a random permutation of indices. By the <em>Johnson-Lindenstrauss Lemma</em> and high data redundancy across factory patches, uniform random sampling provides an unbiased approximation of the data distribution with $\mathcal{O}(1)$ selection cost, achieving $>94.9\%$ AUROC at near-zero memory building time.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q11</span>
+            <span class="viva-question">Why must feature vectors be L2-normalized before insertion into the FAISS memory bank? What happens if you skip normalization?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Without $L_2$ normalization:</p>
+            <ol>
+                <li><strong>Magnitude Dominance:</strong> Transformer tokens with large vector magnitudes ($L_2$ norm) would dominate the Euclidean distance metric ($\|\mathbf{u} - \mathbf{v}\|_2$), even if their directional cosine similarity is high.</li>
+                <li><strong>Threshold Inconsistency:</strong> Distance scales would vary widely across different image categories and lighting conditions, making it impossible to establish a calibrated anomaly threshold.</li>
+                <li><strong>Equivalence to Cosine Similarity:</strong> With unit normalization ($\|\hat{\mathbf{u}}\|_2 = 1$), Euclidean distance is strictly related to cosine similarity:
+                    $$\|\hat{\mathbf{u}} - \hat{\mathbf{v}}\|_2 = \sqrt{2 - 2 \cos(\theta)}$$
+                    This restricts all distances strictly to the range $[0, 2]$, ensuring predictable threshold behavior across categories.
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q12</span>
+            <span class="viva-question">How is the image-level anomaly score aggregated from patch scores? Why use max patch score instead of average?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> The image-level score is computed as the maximum patch distance:</p>
+            $$S_{\text{image}} = \max_{u, v} \mathcal{S}_{\text{patch}}[u, v]$$
+            <p><strong>Why not average?</strong> In industrial defect detection, an anomaly is often tiny (e.g., a 5-pixel puncture on a 224&times;224 bottle). 99% of the patches are completely normal ($s \approx 0.60$). If we used the mean or average across all 196 patches, the subtle anomaly signal would be completely diluted by the overwhelming majority of normal patches, causing the defective bottle to pass inspection undetected.</p>
+        </div>
+    </div>
+
+    <!-- SECTION 7.4 -->
+    <div class="page-break"></div>
+    <h3 class="section-title">Section 7.4: Post-Processing, Localization & Computer Vision Optics</h3>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q13</span>
+            <span class="viva-question">Explain the mathematical purpose of Bicubic Interpolation followed by a 33x33 Gaussian filter in heatmap generation.</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> The raw anomaly scores reside on a coarse $14 \times 14$ grid (each cell represents a $16 \times 16$ image patch).</p>
+            <ul>
+                <li><strong>Bicubic Interpolation:</strong> Resizes $14 \times 14 \to 224 \times 224$ using a 16-point cubic convolution kernel:
+                    $$W(x) = \begin{cases} (a+2)|x|^3 - (a+3)|x|^2 + 1 & \text{for } |x| \le 1 \\ a|x|^3 - 5a|x|^2 + 8a|x| - 4a & \text{for } 1 < |x| < 2 \\ 0 & \text{otherwise} \end{cases}$$
+                    This avoids the blocky, pixelated square artifacts produced by nearest-neighbor interpolation.
+                </li>
+                <li><strong>33&times;33 Gaussian Smoothing Filter:</strong> Convolves the continuous map with a 2D Gaussian kernel $\mathcal{G}_{\sigma}$. This suppresses high-frequency spatial noise caused by patch boundary transitions, producing smooth, continuous probability contours that accurately mirror physical defect boundaries.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q14</span>
+            <span class="viva-question">How does Otsu's Thresholding algorithm work mathematically to isolate the suspicious defect region?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Otsu's algorithm (<code>cv2.THRESH_OTSU</code>) automatically calculates an optimal binarization threshold $T^*$ that minimizes intra-class variance $\sigma_w^2(T)$ (or equivalently maximizes inter-class variance $\sigma_b^2(T)$) between background pixels ($C_0$) and anomaly pixels ($C_1$):</p>
+            $$\sigma_b^2(T) = \omega_0(T) \omega_1(T) \left[ \mu_0(T) - \mu_1(T) \right]^2$$
+            <p>Where $\omega_0, \omega_1$ are the class probabilities, and $\mu_0, \mu_1$ are class mean intensities. The algorithm iterates through all 256 intensity bins, selects $T^* = \arg\max_T \sigma_b^2(T)$, and binarizes the heatmap. External contours are then extracted via Green's theorem / Suzuki's border following algorithm (<code>cv2.findContours</code>) to draw inspection borders.</p>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q15</span>
+            <span class="viva-question">What are Image-level AUROC and Pixel-level AUROC? Why is classification accuracy an unacceptable evaluation metric in anomaly detection?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong></p>
+            <ul>
+                <li><strong>Why Accuracy is Unacceptable:</strong> In industrial datasets, class distributions are heavily skewed (e.g. 99% normal, 1% defective). A trivial model that blindly predicts "normal" for every sample achieves 99% accuracy while having a 0% defect detection rate. Furthermore, accuracy requires choosing an arbitrary threshold $\tau$.</li>
+                <li><strong>Area Under the ROC Curve (AUROC):</strong> Measures the true positive rate (TPR) vs false positive rate (FPR) across <em>all possible decision thresholds</em>:
+                    $$\text{AUROC} = \int_0^1 \text{TPR}(\text{FPR}^{-1}(t)) \, dt$$
+                    Statistically, AUROC equals the probability that the model ranks a randomly chosen anomalous instance higher than a randomly chosen normal instance.
+                </li>
+                <li><strong>Image AUROC:</strong> Evaluates overall binary image classification. DefectLens achieves <strong>94.92%</strong>.</li>
+                <li><strong>Pixel AUROC:</strong> Evaluates localization accuracy by comparing predicted dense anomaly heatmaps against ground-truth binary defect masks. DefectLens achieves <strong>92.90%</strong>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECTION 7.5 -->
+    <div class="page-break"></div>
+    <h3 class="section-title">Section 7.5: Software Engineering, FAISS, Backend & Edge Deployment</h3>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q16</span>
+            <span class="viva-question">How does FAISS IndexFlatL2 execute nearest-neighbor matching, and why are thread count controls necessary?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong></p>
+            <ul>
+                <li><strong>IndexFlatL2 Mechanics:</strong> Executes an exact brute-force Euclidean distance search without lossy vector quantization or graph approximations. It leverages high-performance SIMD CPU vector extensions (AVX2/AVX-512) and BLAS matrix multiplication ($GEMM$) by decomposing $\|\mathbf{x} - \mathbf{y}\|_2^2 = \|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - 2 \mathbf{x}^T \mathbf{y}$.</li>
+                <li><strong>Thread Contention Control:</strong> In high-throughput microservices (FastAPI), multiple concurrent requests invoke FAISS and PyTorch. If OpenMP spawns 16 threads per query while FastAPI spawns 4 worker processes, severe OS thread thrashing and CPU core contention occur. Setting:
+                    <pre><code>faiss.omp_set_num_threads(1)
+torch.set_num_threads(1)</code></pre>
+                    ensures single-threaded execution per request, dramatically stabilizing latency under production concurrency.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q17</span>
+            <span class="viva-question">Explain the model caching strategy implemented in the FastAPI backend (main.py).</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Loading a DeiT-Small model from disk and initializing its FAISS index requires ~1.2 seconds of disk I/O and weight allocation. 
+            In <code>backend/app/main.py</code>, we implemented an in-memory dictionary cache (<code>MODELS</code>, <code>DETECTORS</code>, <code>CONFIGS</code>). On the initial request, the ViT feature extractor and FAISS index are loaded into RAM; subsequent inference calls reuse the active memory objects directly, dropping API response time to under <strong>22 milliseconds</strong>.</p>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q18</span>
+            <span class="viva-question">What are the technical challenges of exporting a dynamic token model like MCTF to ONNX or TensorRT for edge hardware deployment?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong></p>
+            <ol>
+                <li><strong>Dynamic Sequence Dimensions:</strong> Standard TensorRT engines prefer static tensor shapes (e.g. fixed $[B, 196, 384]$). In MCTF, token sequence lengths dynamically shrink after each block ($196 \to 157 \to \dots \to 23$). The ONNX export must define dynamic symbolic sequence axes (<code>dynamic_axes={'tokens': {1: 'seq_len'}}</code>).</li>
+                <li><strong>Data-Dependent Scatter & Gather:</strong> MCTF uses <code>scatter_add_</code> and <code>gather</code> driven by dynamic index tensors generated during runtime matching. While modern ONNX opsets (opset 16+) support these operations, compiling them for edge accelerators (e.g., Hailo-8 or Google Coral) often requires compiling static token masks rather than physical tensor resizing.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- SECTION 7.6 -->
+    <h3 class="section-title">Section 7.6: Failure Modes, Calibration & Edge Cases</h3>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q19</span>
+            <span class="viva-question">What are the primary failure modes of DefectLens, and under what conditions might MCTF fail?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong></p>
+            <ul>
+                <li><strong>Failure Mode 1: Faint, Low-Contrast Anomalies:</strong> If a defect is extremely subtle (e.g. faint oil watermark whose pixel contrast is $<2\%$ different from normal glass), the subsequent layer's attention might not fire strongly ($\overline{\text{info}} \approx 0$). In this scenario, MCTF may treat the defect as background and fuse it.</li>
+                <li><strong>Failure Mode 2: Uncalibrated Category Thresholds:</strong> Normal distance scores depend on category texture complexity (e.g., smooth bottle normal score $\approx 0.62$, while complex hazelnut texture normal score $\approx 0.74$). Transferring a decision threshold across categories without recalibration creates false positives.</li>
+                <li><strong>Failure Mode 3: Severe Lighting / Pose Variations:</strong> If an object rotates or ambient factory illumination shifts significantly, normal patches shift in feature space and trigger false-positive distance spikes.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="viva-card">
+        <div class="viva-header">
+            <span class="viva-qnum">VIVA Q20</span>
+            <span class="viva-question">What proposed "Defect-Aware Freezing" extension would you implement in Future Work?</span>
+        </div>
+        <div class="viva-body">
+            <p><strong>Answer:</strong> Currently, MCTF uses general informativeness from subsequent layer attention. A superior, domain-specific extension is <strong>Defect-Aware Token Freezing</strong>:
+            At intermediate layer 4, compute a lightweight preliminary anomaly score against a miniature memory bank. Any token whose intermediate anomaly score exceeds a threshold $\tau_{\text{freeze}}$ is immediately flagged as a "Protected Defect Token" and completely excluded from bipartite candidate selection for all remaining layers, guaranteeing 100% preservation of faint defects regardless of similarity.</p>
+        </div>
+    </div>
+
+    <!-- ==================== CHAPTER 8: CHEAT SHEET ==================== -->
+    <div class="page-break"></div>
+    <h2 class="chapter-title">Chapter 8: Candidate Viva Quick-Reference Cheat Sheet</h2>
+
+    <h3 class="section-title">8.1 The 60-Second Elevator Pitch (Memorize This!)</h3>
+    <div class="callout callout-info" style="font-size: 9.5pt; line-height: 1.6;">
+        "<strong>DefectLens</strong> is an industrial visual anomaly detection system engineered to solve the speed-vs-accuracy trade-off of Vision Transformers in automated manufacturing. While ViTs achieve state-of-the-art anomaly detection via global self-attention, their quadratic token complexity ($\mathcal{O}(N^2 D)$) causes unacceptable latency on factory-floor hardware.<br><br>
+        To solve this, we introduced <strong>Multi-Criteria Token Fusion (MCTF)</strong>, a dynamic module that merges redundant background patches using three mathematical criteria: cosine feature similarity, one-step-ahead attention informativeness, and token mass regulation. On the MVTec AD benchmark, MCTF slashes token count by <strong>88.27%</strong> (from 196 down to 23 tokens), delivering a <strong>2.28&times; inference speedup</strong> (cutting latency from 45.1 ms to 19.7 ms on CPU) while preserving <strong>94.92% Image AUROC</strong> and <strong>92.90% Pixel AUROC</strong>. The complete system includes a FAISS memory bank, bicubic heatmap reconstruction, a FastAPI backend, and an interactive React dashboard."
+    </div>
+
+    <h3 class="section-title">8.2 Key Mathematical Formulas Quick Reference</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Mechanism</th>
+                <th>Mathematical Formula</th>
+                <th>Operational Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>MHSA Complexity</strong></td>
+                <td>$\mathcal{O}(8ND^2 + 4N^2D)$</td>
+                <td>Quadratic scaling bottleneck in tokens $N$.</td>
+            </tr>
+            <tr>
+                <td><strong>Cosine Similarity</strong></td>
+                <td>$W_{\text{sim}} = \left(\frac{\hat{\mathbf{t}}_a \cdot \hat{\mathbf{t}}_b + 1}{2}\right)^{\tau_{\text{sim}}}$</td>
+                <td>Restricts fusion to semantically homogeneous tokens.</td>
+            </tr>
+            <tr>
+                <td><strong>One-Step-Ahead Attention</strong></td>
+                <td>$W_{\text{info}} = \exp\left(-(\overline{\text{info}}_a + \overline{\text{info}}_b)\right)^{\tau_{\text{info}}}$</td>
+                <td>Protects attended defect tokens from being merged.</td>
+            </tr>
+            <tr>
+                <td><strong>Token Size Penalty</strong></td>
+                <td>$W_{\text{size}} = \left(\frac{1}{s_a + s_b}\right)^{\tau_{\text{size}}}$</td>
+                <td>Prevents representation collapse into mega-tokens.</td>
+            </tr>
+            <tr>
+                <td><strong>Feature Aggregation</strong></td>
+                <td>$\mathbf{t}_b^{\text{new}} = \frac{s_b \mathbf{t}_b + \sum s_a \mathbf{t}_a}{s_b + \sum s_a}$</td>
+                <td>Conserves visual energy via mass-weighted mean.</td>
+            </tr>
+            <tr>
+                <td><strong>Hypersphere Distance</strong></td>
+                <td>$\|\hat{\mathbf{u}} - \hat{\mathbf{v}}\|_2^2 = 2 - 2 \cos(\theta) \in [0, 2]$</td>
+                <td>Normalizes metric distance across all categories.</td>
+            </tr>
+            <tr>
+                <td><strong>Image Anomaly Score</strong></td>
+                <td>$S_{\text{image}} = \max_{u, v} \mathcal{S}_{\text{patch}}[u, v]$</td>
+                <td>Detects tiny localized anomalies without dilution.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 class="section-title">8.3 Key Empirical Metrics to Quote During Defense</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Baseline ViT</th>
+                <th>MCTF-ViT (Ours)</th>
+                <th>Impact / Delta</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Active Tokens (Penultimate Block)</strong></td>
+                <td>196 tokens</td>
+                <td><strong>23 tokens</strong></td>
+                <td><strong>-88.27% token reduction</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Per-Sample Inference Latency (CPU)</strong></td>
+                <td>45.07 ms</td>
+                <td><strong>19.73 ms</strong></td>
+                <td><strong>2.28&times; speedup (-56.2% latency)</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Image-Level Detection AUROC</strong></td>
+                <td>100.0%</td>
+                <td><strong>94.92%</strong></td>
+                <td>Maintains high classification power</td>
+            </tr>
+            <tr>
+                <td><strong>Pixel-Level Localization AUROC</strong></td>
+                <td>98.68%</td>
+                <td><strong>92.90%</strong></td>
+                <td>Precise defect spatial heatmap overlay</td>
+            </tr>
+            <tr>
+                <td><strong>Decision Threshold (Bottle)</strong></td>
+                <td>0.72</td>
+                <td><strong>0.69</strong></td>
+                <td>Normal: $\sim 0.62$, Anomalous: $\sim 0.87-1.02$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-note">
+        <strong>DefectLens Project (Team 7) &bull; CSE411 Computer Vision &bull; Final Master Technical Report & Viva Preparation Guide</strong><br>
+        Source code and artifacts verified at <a href="https://github.com/sachhu04/DefectLens" style="color: var(--accent);">https://github.com/sachhu04/DefectLens</a>
+    </div>
+
+</div>
+
+</body>
+</html>

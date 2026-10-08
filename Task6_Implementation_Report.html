@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE411 Task 6: Implementation Part 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            font-size: 18px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #000000;
+        }
+
+        h1 {
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            break-before: page;
+            page-break-before: always;
+        }
+
+        .project-info h2 {
+            break-before: auto;
+            page-break-before: auto;
+        }
+
+        .project-info {
+            background: #f4f7f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .project-info p {
+            margin: 5px 0;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e1e4e8;
+            overflow-x: auto;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #000000;
+            color: white;
+        }
+
+        .figure {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .figure img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .figure-caption {
+            font-style: italic;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-info {
+            color: #31708f;
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+        }
+
+        .grid-img {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .grid-img img {
+            width: 45%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CSE411 – Computer Vision<br>Project Task 6: Implementation – Part 3</h1>
+
+    <div class="project-info">
+        <h2>1. PROJECT INFORMATION</h2>
+        <p><strong>Project Title:</strong> DefectLens: Efficient ViT-Based Anomaly Detection with Multi-Criteria Token
+            Fusion (MCTF)</p>
+        <p><strong>Team Number:</strong> Team 7</p>
+        <p><strong>Team Members:</strong></p>
+        <ul>
+            <li>Sachin Singh – 2023bcs0064</li>
+            <li>Tanish Babu – 2023bcs0067</li>
+            <li>Ali Mohammed Maaz Mohammed Ashraf – 2023bcs0202</li>
+            <li>Chinmoy Das – 2023bcs0052</li>
+        </ul>
+    </div>
+
+    <h2>2. PROJECT OVERVIEW</h2>
+    <p>The <strong>DefectLens</strong> project is a visual anomaly detection system for identifying manufacturing
+        defects. We are using a <strong>Vision Transformer (ViT)</strong> combined with a PatchCore-style FAISS memory
+        bank. To improve efficiency, we added a <strong>Multi-Criteria Token Fusion (MCTF)</strong> module that
+        dynamically merges redundant background tokens, which helps reduce inference latency and FLOPs while maintaining
+        accuracy.</p>
+    <p><strong>Task 6 Part 3 Focus:</strong> This milestone targets <strong>75% overall implementation</strong>. We have
+        successfully developed the React.js frontend interface and integrated all existing modules (ViT, MCTF, FAISS,
+        FastAPI) into a complete, working prototype. The system can now accept user uploads via the browser, process
+        them through our deep learning pipeline, and return real-time visual heatmaps and metrics back to the UI.</p>
+
+    <h2>3. INTEGRATED PROTOTYPE ARCHITECTURE</h2>
+    <p>The complete prototype operates as follows:</p>
+    <p><strong>React UI (Vite) &harr; FastAPI REST Server &harr; [ViT + MCTF Core] &harr; [FAISS Memory Bank]</strong>
+    </p>
+
+    <div class="alert alert-info">
+        <strong>Implemented up to Task 6 Part 3 (Approx 75%):</strong><br>
+        Dataset pipelines, ViT Backbone, MCTF Token Fusion, FAISS Memory Bank, Anomaly Distance Scoring, FastAPI
+        Backend, and the React.js Interactive Frontend Dashboard. All modules are fully integrated into a working
+        prototype.
+    </div>
+
+    <div class="alert alert-info" style="background-color: #fcf8e3; border-color: #faebcc; color: #8a6d3b;">
+        <strong>Remaining Work to be Completed (Remaining 25%):</strong><br>
+        Comprehensive ROC/Latency performance evaluation across the full MVTec dataset, edge/camera throughput
+        simulation, and final system deployment/reporting.
+    </div>
+
+
+    <h2>4. SYSTEM INTEGRATION & FRONTEND DEVELOPMENT</h2>
+    <p>For this 75% milestone, the primary achievement is the completion and integration of the user interface. We built
+        a modern, responsive dashboard using React and Tailwind CSS that acts as the control center for the anomaly
+        detection engine.</p>
+
+    <h3>Module Integration: Connecting Frontend and Backend</h3>
+    <ul>
+        <li><strong>Objective:</strong> To allow operators to visually interact with the model without writing code,
+            completing the loop from data input to model inference to visual output.</li>
+        <li><strong>Implementation Status:</strong> <code>App.jsx</code> developed and running via Vite, successfully
+            communicating with <code>main.py</code> (FastAPI).</li>
+    </ul>
+
+    <div class="figure">
+        <img src="real_screenshot_frontend.png" alt="Frontend Server Startup">
+        <div class="figure-caption"><strong>Figure 1. Vite Development Server execution.</strong> The React frontend
+            running locally, ready to accept client connections.</div>
+    </div>
+
+    <div class="figure">
+        <img src="real_screenshot_server.png" alt="Backend Server Startup">
+        <div class="figure-caption"><strong>Figure 2. FastAPI Backend Server execution.</strong> The backend actively
+            running in parallel with the frontend, ready to process REST API requests.</div>
+    </div>
+
+    <h2>5. PROTOTYPE DEMONSTRATION & RESULTS</h2>
+    <p>To prove the integration, we ran the complete pipeline end-to-end through the web interface. We uploaded an image
+        from the MVTec AD <code>broken_small</code> testing set into the UI and executed the inspection.</p>
+
+    <div class="figure">
+        <img src="real_screenshot_ui_idle.png" alt="UI Idle State">
+        <div class="figure-caption"><strong>Figure 3. DefectLens Dashboard (Idle State).</strong> The React interface
+            provides configuration options for selecting the defect category (e.g., bottle) and the model pipeline (MCTF
+            vs Baseline).</div>
+    </div>
+
+    <div class="figure">
+        <img src="file:///Users/sachinsingh070/Downloads/outputs_cv_proj.jpeg" alt="UI Inference Results">
+        <div class="figure-caption"><strong>Figure 4. Working Prototype Results.</strong> After clicking "Run
+            Inspection", the frontend successfully routed the image to the FastAPI server, which ran the MCTF ViT and
+            FAISS models. The UI immediately displays the quantitative results (Anomaly Score, Latency, Token Reduction)
+            and the visual heatmaps (Original, Heatmap, Overlay, Suspicious Region).</div>
+    </div>
+
+
+    <h2>6. CURRENT IMPLEMENTATION STATUS (75%)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Component</th>
+                <th>Status</th>
+                <th>Evidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Dataset Collection & Loaders</td>
+                <td>Completed (Task 4)</td>
+                <td><code>dataset.py</code> and active data directories</td>
+            </tr>
+            <tr>
+                <td>MCTF Module & ViT Integration</td>
+                <td>Completed (Task 4)</td>
+                <td><code>mctf.py</code> codebase</td>
+            </tr>
+            <tr>
+                <td>Memory Bank (FAISS)</td>
+                <td>Completed (Task 5)</td>
+                <td><code>build_memory_bank.py</code> & artifacts</td>
+            </tr>
+            <tr>
+                <td>FastAPI Backend</td>
+                <td>Completed (Task 5)</td>
+                <td><code>main.py</code> API endpoints</td>
+            </tr>
+            <tr>
+                <td>React Frontend UI</td>
+                <td>Completed (Task 6)</td>
+                <td><code>App.jsx</code> and Tailwind styling</td>
+            </tr>
+            <tr>
+                <td>Full System Integration</td>
+                <td>Completed (Task 6)</td>
+                <td>Working browser prototype (Figures 3 & 4)</td>
+            </tr>
+            <tr>
+                <td>Comprehensive Benchmarking</td>
+                <td>Not started</td>
+                <td>Remaining 25%</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>7. REMAINING WORK TO BE COMPLETED (25%)</h2>
+    <p>With the software prototype fully integrated and operational, the final 25% of the project will focus purely on
+        rigorous scientific evaluation and edge-case testing:</p>
+    <ol>
+        <li><strong>Comprehensive Performance Evaluation:</strong> Run the automated benchmark script over all 15 MVTec
+            AD dataset categories. We will plot ROC curves and definitively compare the Baseline ViT against our
+            MCTF-ViT to document the exact FLOPs and latency improvements on a large scale.</li>
+        <li><strong>Edge / Camera Simulation:</strong> Write a script that simulates a continuous, high-speed camera
+            feed by sending sequential requests to the API. This will test the system's throughput under industrial load
+            conditions.</li>
+        <li><strong>Final Polishing & Documentation:</strong> Write the overarching Final Project Report, compile all
+            charts, and prepare the codebase for final submission.</li>
+    </ol>
+
+    <h2>8. CONCLUSION</h2>
+    <p>For Task 6 (Implementation Part 3), Team 7 has successfully reached the 75% implementation milestone. We have
+        built the React.js user interface and bridged the gap between our core PyTorch models and a usable front-end
+        dashboard. The DefectLens system is now a fully integrated, working prototype that operators can use to
+        configure models, upload images, and visually inspect anomalies in real-time. We are now prepared to execute the
+        final comprehensive benchmarking phase.</p>
+
+</body>
+
+</html>

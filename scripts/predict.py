@@ -56,7 +56,12 @@ def main():
 
     layer_idx = config.get('layer_idx', -2)
     grid_size = config.get('image_size', 224) // model.patch_size
-    threshold = config['anomaly_detector'].get('threshold', 0.70)
+    category_thresholds = {
+        'bottle': 0.69,
+        'cable': 0.88,
+        'metal_nut': 0.89
+    }
+    threshold = category_thresholds.get(args.category, config['anomaly_detector'].get('threshold', 0.70))
 
     # Inference timing
     start_time = time.perf_counter()

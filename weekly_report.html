@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DefectLens: Weekly Project Report</title>
+    <style>
+        /* IEEE Research Paper Formatting - Large Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.4;
+            color: #000;
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            font-size: 14pt; /* Large fonts as requested */
+        }
+
+        .paper-container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.75in 1in;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        /* Title Area */
+        .title-block {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1.paper-title {
+            font-size: 26pt; 
+            margin-bottom: 20px;
+            font-weight: normal; 
+            line-height: 1.2;
+        }
+
+        /* Authors Styling */
+        .authors-table {
+            width: 100%;
+            margin: 0 auto 30px auto;
+            text-align: center;
+            border: none;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+        }
+        
+        .authors-table td {
+            border: none;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .author-name {
+            font-size: 16pt;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .author-roll {
+            font-size: 14pt;
+            font-style: italic;
+        }
+
+        .affiliation {
+            font-size: 14pt;
+            font-style: italic;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 25px;
+        }
+
+        /* Abstract */
+        .abstract {
+            margin: 0 auto 25px auto;
+            width: 95%;
+            font-weight: bold;
+            text-align: justify;
+            font-size: 13pt;
+        }
+
+        .abstract span {
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Two Column Layout */
+        .content {
+            column-count: 2;
+            column-gap: 0.35in;
+            text-align: justify;
+        }
+
+        /* Headings */
+        h2 {
+            font-size: 15pt;
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+
+        /* Paragraphs */
+        p {
+            margin: 0 0 14px 0;
+            text-indent: 15px;
+        }
+        
+        ul {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Printing specifics */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            html, body {
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none;
+            }
+            .paper-container { 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100%; 
+                box-shadow: none; 
+            }
+            @page { 
+                margin: 0.75in; 
+                size: letter; 
+            }
+            /* Try to prevent page breaks inside sections if requested no partition */
+            h2, p {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper-container">
+    <div class="title-block">
+        <h1 class="paper-title">DefectLens: Efficient ViT-Based Anomaly Detection with Multi-Criteria Token Fusion (MCTF)</h1>
+        
+        <table class="authors-table">
+            <tr>
+                <td>
+                    <div class="author-name">Sachin Singh</div>
+                    <div class="author-roll">Roll No: 2023bcs0064</div>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="affiliation">
+            Weekly Project Write-Up<br>
+            Course: Computer Vision
+        </div>
+    </div>
+
+    <div class="abstract">
+        <span>Abstract.</span> This weekly report outlines the foundational requirements for the DefectLens project. It details the core problem of computational inefficiency in Vision Transformers (ViTs) for high-resolution industrial anomaly detection, the motivation behind applying a Multi-Criteria Token Fusion (MCTF) architecture for real-time edge deployment, and the specific objectives the project intends to achieve to solve the accuracy-latency trade-off.
+    </div>
+
+    <div class="content">
+        <h2>I. Problem Statement</h2>
+        <p>
+            Industrial visual inspection is paramount for maintaining manufacturing quality control. Traditional supervised learning approaches are fundamentally constrained as they require exhaustively labeled datasets for every conceivable defect type—a practical impossibility given the rarity, subtlety, and unpredictable nature of manufacturing flaws. Consequently, unsupervised anomaly detection—learning the manifold of pristine "normal" products—has emerged as the standard paradigm.
+        </p>
+        <p>
+            While Vision Transformers (ViTs) have achieved state-of-the-art performance in these tasks by capturing comprehensive global context and rich patch-level representations, they inherently suffer from massive computational overhead due to their quadratic complexity with sequence length. In industrial scenarios where high throughput (low latency) and high-resolution imaging are critical, the fixed and highly redundant token processing of standard ViTs introduces a debilitating bottleneck. The core problem this project addresses is: How can we drastically reduce the computational footprint of ViTs for anomaly detection without sacrificing the high-resolution, fine-grained visual details required for accurate defect localization?
+        </p>
+
+        <h2>II. Motivation & Application</h2>
+        <p>
+            Failing to detect subtle defects can lead to catastrophic product failures, massive recalls, and safety hazards, particularly in precision industries like aerospace, medical devices, and semiconductor manufacturing. Conversely, an overly slow inspection system creates a severe production bottleneck, reducing yield. Resolving the latency-accuracy trade-off is critical for enabling next-generation smart manufacturing and Industry 4.0.
+        </p>
+        <p>
+            The primary motivation stems from the stringent operational demands of modern manufacturing pipelines, which require inspection mechanisms to be both exceptionally accurate and blisteringly fast. Standard CNN-based models often struggle with complex global geometries and textures, while standard ViTs are too computationally dense for real-time edge deployment on automated production lines.
+        </p>
+        <p>
+            This project is specifically designed for deployment in Automated Optical Inspection (AOI) systems located directly on factory floors. By leveraging a high-performance, optimized anomaly detection model, manufacturers can instantly identify structural defects, surface contaminations, and assembly errors (comparable to those found in the MVTec AD dataset) in real-time as products move rapidly along a conveyor belt.
+        </p>
+
+        <h2>III. Objectives</h2>
+        <p>
+            The central objective of DefectLens is to engineer an optimized, high-throughput industrial anomaly detection architecture that harnesses the profound representational power of Vision Transformers while systematically mitigating their computational drawbacks. Specifically, the project intends to achieve the following:
+        </p>
+        <ul>
+            <li>Establish a Vision Transformer architecture coupled with a Memory Bank (PatchCore-style) to create a robust foundation for unsupervised anomaly detection.</li>
+            <li>Integrate a Multi-Criteria Token Fusion (MCTF) module that dynamically identifies and merges redundant background tokens across ViT layers.</li>
+            <li>Implement specialized criteria—including token similarity, informativeness (via one-step-ahead attention), and token size penalties—to ensure that small but critical defect representations are protected.</li>
+            <li>Drastically reduce the Floating Point Operations (FLOPs) and overall end-to-end latency by reducing token counts, making the model viable for high-speed edge inference.</li>
+            <li>Deliver an end-to-end system by packaging the model with a functional FastAPI backend and a React-based frontend to simulate a real-world quality control dashboard.</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

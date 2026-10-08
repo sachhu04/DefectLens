@@ -1,0 +1,133 @@
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=blue,
+}
+
+\begin{document}
+
+\title{Literature Survey and Research Gap Identification: \\
+\Large DefectLens: Efficient ViT-Based Industrial Anomaly Detection with Multi-Criteria Token Fusion (MCTF)}
+
+\author{
+    \IEEEauthorblockN{
+        Chinmoy Das (2023BCS0052), 
+        Sachin Singh (2023BCS0064), \\
+        Tanish Babu (2023BCS0067), 
+        Ali Mohammed Maaz Mohammed Ashraf (2023BCS0202)
+    }\\
+    \IEEEauthorblockA{
+        \textit{Department of Computer Science and Engineering} \\
+        \textit{Course: Computer Vision $\bullet$ Project Submission $\bullet$ Team Number: 07}
+    }
+}
+
+\maketitle
+
+\begin{abstract}
+Automated Optical Inspection (AOI) in manufacturing quality assurance requires high accuracy to localize microscopic surface flaws while maintaining high throughput. While Vision Transformers (ViTs) and nearest-neighbor patch-memory banks (such as PatchCore) define the state-of-the-art in visual anomaly detection, standard ViTs process a fixed, high volume of redundant image tokens, incurring an $\mathcal{O}(N^2)$ computational explosion that impedes edge deployment. This report conducts a literature survey of 8 canonical peer-reviewed research papers across memory-bank modeling, reconstruction, normalizing flows, unified transformers, and token reduction architectures. We construct an IEEE-standard comparative matrix, systematically articulate observed research gaps in existing literature, and present how our proposed system, \textbf{DefectLens}, overcomes these limitations via Multi-Criteria Token Fusion (MCTF) with one-step-ahead informativeness shielding.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Visual Anomaly Detection, Vision Transformers, Token Reduction, Multi-Criteria Token Fusion, PatchCore, Industrial Inspection.
+\end{IEEEkeywords}
+
+\section{Introduction}
+In modern manufacturing, visual surface inspection is vital for ensuring component integrity. Because real-world defects (scratches, cracks, contaminations) are scarce and unpredictable, \textit{Unsupervised Visual Anomaly Detection (VAD)} trains exclusively on pristine (``normal'') parts, flagging anomalies as out-of-distribution deviations during inference.
+
+Recently, Vision Transformers (ViTs) have demonstrated superior representational power over Convolutional Neural Networks (CNNs) by capturing long-range contextual relationships. However, because self-attention scales quadratically with token sequence length ($N = (H/P) \times (W/P)$), processing high-resolution industrial imagery ($512\times512$ with $16\times16$ patches, $N = 1024$) leads to high latency ($\sim$45ms per frame). To overcome this, \textbf{DefectLens} integrates ViTs with Multi-Criteria Token Fusion (MCTF) and a FAISS-based PatchCore memory bank.
+
+\section{Survey of 8 Canonical Research Papers}
+
+\noindent \textbf{1. PatchCore (Roth et al., CVPR 2022) \cite{roth2022patchcore}:} Extracts mid-level locally aggregated patch features from pre-trained CNN backbones (WideResNet50). Retains a nominal patch memory bank subsampled via an iterative Minimax Coreset algorithm, scoring test patch anomalies via nearest-neighbor Euclidean distance. Achieves \textbf{99.1\% Image AUROC} and \textbf{98.1\% Pixel AUROC} on MVTec AD. \textit{Limitations:} Inference latency scales with resolution due to exhaustive patch matching against the memory bank; CNN backbones lack global context.
+
+\noindent \textbf{2. MVTec AD Benchmark (Bergmann et al., CVPR 2019) \cite{bergmann2019mvtec}:} Establishes the standard benchmark for industrial anomaly inspection. Evaluates baseline reconstruction models including Autoencoders with $L_2$ loss, SSIM-AE, Variational Autoencoders (VAEs), and texture GMMs. Baseline AEs reached only \textbf{70.0\%--82.0\% Image AUROC} (SSIM-AE: 75.4\%). \textit{Limitations:} Suffers from the ``identical shortcut'' (reconstructing defects) and blurry reconstructions, causing false alarms.
+
+\noindent \textbf{3. PaDiM (Defard et al., ICPR 2020) \cite{defard2020padim}:} Concatenates patch embeddings across multi-scale CNN layers (ResNet18 / WideResNet50). Fits localized multivariate Gaussian distributions $\mathcal{N}(\mu_{(i,j)}, \Sigma_{(i,j)})$ to each spatial position $(i, j)$ and scores anomalies via Mahalanobis distance. Achieves \textbf{97.9\% Image AUROC} and \textbf{97.5\% Pixel AUROC} at $\sim$15 FPS. \textit{Limitations:} Strictly assumes rigid spatial alignment; fails on rotated parts; covariance storage scales as $\mathcal{O}(HW \cdot D^2)$.
+
+\noindent \textbf{4. MCTF (Lee, Choi, \& Kim, CVPR 2024) \cite{lee2024multi}:} Introduces dynamic token reduction in Vision Transformers via bipartite soft-matching modulated by three joint criteria: Cosine Feature Similarity, One-step-ahead Attention Informativeness (shielding tokens heavily attended in deeper layers), and Token Size penalties. Achieves \textbf{44\% FLOP reduction} with a \textbf{+0.5\% accuracy increase} on ImageNet. \textit{Limitations:} Formulated solely for image classification; lacks spatial inverse-indexing for anomaly heatmaps; never integrated with memory banks.
+
+\noindent \textbf{5. Token Merging (ToMe) (Bolya et al., ICLR 2023) \cite{bolya2023tome}:} Training-free bipartite soft matching that partitions tokens into bipartite sets $\mathbb{A}$ and $\mathbb{B}$, merging top-$r$ similar tokens via dot-product keys, giving a \textbf{2.0$\times$ speedup} and 44\% GFLOP reduction. \textit{Limitations:} Pure similarity merging destroys small anomaly tokens by fusing them into massive background clusters (false negatives in defect detection).
+
+\noindent \textbf{6. UniAD (You et al., NeurIPS 2022) \cite{you2022uniad}:} Unified transformer framework trained across multiple product categories simultaneously with Layer-wise Query Decoder and Neighbor-Masked Attention (NMA). Achieves \textbf{96.5\% Image AUROC} and \textbf{96.8\% Pixel AUROC}. \textit{Limitations:} High training complexity (hundreds of GPU hours); high latency ($\sim$65ms) unsuitable for real-time edge inspection.
+
+\noindent \textbf{7. FastFlow (Yu et al., arXiv 2021) \cite{yu2021fastflow}:} Employs 2D Normalizing Flows with 2D convolutional subnets mapping spatial ViT/CaiT features to a standard 2D Gaussian. Achieves \textbf{99.4\% Image AUROC} (CaiT) and \textbf{98.8\%} (ViT-B). \textit{Limitations:} High inference computation for invertible flow layers; large model weight footprint ($>100\text{MB}$); training instability.
+
+\noindent \textbf{8. Reverse Distillation / RD4AD (Deng \& Li, CVPR 2022) \cite{deng2022anomaly}:} Teacher-Student knowledge distillation with reverse One-Class Embedding bottleneck, scoring anomalies via cosine feature divergence. Achieves \textbf{98.5\% Image AUROC} and \textbf{97.8\% Pixel AUROC} at $\sim$45 FPS. \textit{Limitations:} Requires training custom student models per class; struggles on complex textures; cannot dynamically reduce tokens.
+
+\begin{table*}[t]
+\centering
+\caption{Systematic Comparison of 8 Surveyed Research Papers}
+\label{tab:comparison}
+\scriptsize
+\begin{tabularx}{\textwidth}{l p{4.2cm} p{1.6cm} p{2.8cm} X}
+\toprule
+\textbf{Paper \& Model} & \textbf{Method / Technique} & \textbf{Dataset} & \textbf{Results / Metrics} & \textbf{Limitations \& Bottlenecks} \\
+\midrule
+\textbf{PatchCore} \cite{roth2022patchcore} & Mid-level CNN patch aggregation; Minimax Coreset memory subsampling; Nearest-neighbor anomaly scoring. & MVTec AD & Image AUROC: \textbf{99.1\%} \newline Pixel AUROC: \textbf{98.1\%}, PRO: 98.2\% & High latency on high-res images; quadratic patch matching cost; CNN lacks global context. \\
+\midrule
+\textbf{MVTec AD Baseline} \cite{bergmann2019mvtec} & Reconstructive autoencoders (SSIM-AE, $L_2$-AE, VAE) and texture GMM baselines. & MVTec AD & Image AUROC: \textbf{70.0--82.0\%} \newline SSIM-AE: 75.4\% & Identity shortcut problem (reconstructs defects); blurry edges cause heavy false alarms in localization. \\
+\midrule
+\textbf{PaDiM} \cite{defard2020padim} & Multi-layer CNN patch concatenation; Parametric Multivariate Gaussian per position; Mahalanobis distance. & MVTec AD, STC & Image AUROC: \textbf{97.9\%} \newline Pixel AUROC: \textbf{97.5\%}, FPS: $\sim$15 & Assumes strict spatial alignment; fails on rotated/translated parts; high memory ($\mathcal{O}(HW \cdot D^2)$). \\
+\midrule
+\textbf{MCTF (Vision)} \cite{lee2024multi} & Bipartite soft-matching combining Cosine Similarity, One-step-ahead Attention, and Token Size penalty. & ImageNet-1K, ImageNet-V2 & FLOP Reduction: \textbf{44\%} \newline Top-1 Acc Gain: \textbf{+0.5\%} & Built only for global classification; lacks spatial inverse-mapping for anomaly heatmaps; never used with memory banks. \\
+\midrule
+\textbf{ToMe} \cite{bolya2023tome} & Training-free bipartite soft matching merging top-$r$ most similar tokens via dot-product keys. & ImageNet-1K, Kinetics-400 & Throughput: \textbf{2.0$\times$ speedup} \newline GFLOP Reduction: 44\% & Pure similarity merging destroys small anomaly tokens by fusing them into large background clusters (false negatives). \\
+\midrule
+\textbf{UniAD} \cite{you2022uniad} & Unified multi-class transformer with Layer-wise Query Decoder and Neighbor-Masked Attention (NMA). & MVTec AD, VisA & Image AUROC: \textbf{96.5\%} \newline Pixel AUROC: \textbf{96.8\%} & Extreme training complexity (hundreds of GPU hours); high latency ($\sim$65ms) unsuitable for real-time edge inspection. \\
+\midrule
+\textbf{FastFlow} \cite{yu2021fastflow} & 2D Normalizing Flows with 2D convolutional subnets mapping spatial ViT/CaiT features to standard Gaussian. & MVTec AD & Image AUROC: \textbf{99.4\%} (CaiT) \newline Image AUROC: \textbf{98.8\%} (ViT) & High inference computation for invertible flow layers; large model weight footprint ($>$100MB); training instability. \\
+\midrule
+\textbf{RD4AD} \cite{deng2022anomaly} & Teacher-Student distillation with reverse One-Class Embedding bottleneck; cosine distance scoring. & MVTec AD & Image AUROC: \textbf{98.5\%} \newline Pixel AUROC: \textbf{97.8\%}, FPS: $\sim$45 & Requires training custom student models per class; struggles on complex textures; cannot dynamically reduce tokens. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\section{Identification of Research Gaps in Existing Work}
+Comparative analysis of current literature reveals four critical research gaps:
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{ViT Quadratic Complexity in High-Resolution AOI:} Standard self-attention scales as $\mathcal{O}(N^2)$ where $N = (H/P) \times (W/P)$. For high-resolution inspection ($512\times512$, $N = 1024$), standard ViTs incur $\sim$45ms latency per image, creating severe throughput bottlenecks on fast production lines.
+    \item \textbf{Catastrophic Anomaly Token Merging in Naive Pruning (ToMe):} Existing token reduction methods rely exclusively on cosine feature similarity. In industrial defect inspection, subtle flaws (hairline scratches, pinholes) occupy only 1--4 tokens out of 1024. In early layers, anomaly tokens share visual features with surrounding background pixels. Pure similarity-based merging invariably fuses defect tokens into massive background clusters, irreversibly destroying defect sensitivity.
+    \item \textbf{Memory Bank Query Scalability \& Representation Collapse:} Memory-bank methods (PatchCore) perform individual $k$-NN searches for all 1,024 tokens against millions of coreset vectors stored in FAISS. Unpruned token sequences double query time. Furthermore, spatial coordinates must be preserved during token reduction to render accurate pixel-level localization heatmaps.
+    \item \textbf{Lack of Industrial Anomaly Detection in Token Fusion Literature:} Advanced token fusion methods like MCTF \cite{lee2024multi} were developed strictly for closed-set supervised classification (ImageNet-1K) and have never been adapted for unsupervised visual anomaly detection or integrated with nearest-neighbor memory banks.
+\end{enumerate}
+
+\section{How DefectLens Relates to and Differs from Existing Work}
+\textbf{DefectLens} addresses each identified gap through a novel architectural synergy combining Vision Transformers, Multi-Criteria Token Fusion (MCTF), and FAISS memory banks:
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{Architectural Synergy (ViT + MCTF + Memory Bank):} Unlike PatchCore (static CNNs) or ToMe (defect feature collapse), DefectLens embeds an MCTF module between intermediate ViT blocks. By dynamically reducing redundant background tokens while querying normal representations from a FAISS vector index, DefectLens combines global semantic reasoning with high inference speeds.
+    \item \textbf{Tri-Fold Fusion Safeguard with One-Step-Ahead Attention:} DefectLens enforces a tripartite matching policy: (i) \textit{Cosine Similarity} fuses only semantically redundant background tokens; (ii) \textit{One-Step-Ahead Attention} inspects deeper layers to assign a protection shield to informative anomaly tokens; (iii) \textit{Token Size Penalty} prevents representation collapse and preserves spatial localization fidelity.
+    \item \textbf{Full End-to-End Production System:} Unlike theoretical research scripts, DefectLens delivers a full production stack featuring a FastAPI microservice backend and a React-based Automated Optical Inspection dashboard with real-time heatmap visualization.
+\end{enumerate}
+
+\section{Conclusion}
+DefectLens establishes an efficient, high-throughput visual anomaly detection pipeline for smart manufacturing. By replacing rigid patch extraction with Multi-Criteria Token Fusion, the framework bridges the accuracy-efficiency divide in Automated Optical Inspection.
+
+\begin{thebibliography}{00}
+\bibitem{roth2022patchcore} K. Roth, L. Pemula, J. Zepeda, B. Schölkopf, T. Brox, and P. Gehler, ``Towards Total Recall in Industrial Anomaly Detection,'' in \textit{Proc. IEEE/CVF CVPR}, pp. 14318--14328, 2022.
+\bibitem{bergmann2019mvtec} P. Bergmann, M. Fauser, D. Sattlegger, and C. Steger, ``MVTec AD --- A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection,'' in \textit{Proc. IEEE/CVF CVPR}, pp. 9592--9600, 2019.
+\bibitem{defard2020padim} T. Defard, A. Setkov, A. Loesch, and R. Audigier, ``PaDiM: a Patch Distribution Modeling Framework for Anomaly Detection and Localization,'' in \textit{Proc. ICPR}, pp. 475--489, 2020.
+\bibitem{lee2024multi} S. Lee, J. Choi, and H. J. Kim, ``Multi-criteria Token Fusion with One-step-ahead Attention for Efficient Vision Transformers,'' in \textit{Proc. IEEE/CVF CVPR}, pp. 15724--15733, 2024.
+\bibitem{bolya2023tome} D. Bolya, C. Y. Fu, X. Dai, P. Zhang, C. Feichtenhofer, and J. Hoffman, ``Token Merging: Your ViT But Faster,'' in \textit{Proc. ICLR}, 2023.
+\bibitem{you2022uniad} Z. You, L. Cui, Y. Shen, Z. Yang, X. Zheng, X. Le, Y. Peng, and W. Chen, ``A Unified Model for Multi-Class Anomaly Detection,'' in \textit{Adv. Neural Inf. Process. Syst. (NeurIPS)}, vol. 35, pp. 4571--4584, 2022.
+\bibitem{yu2021fastflow} J. Yu, Y. Zheng, X. Wang, W. Li, Y. Wu, R. Zhao, and C. Wu, ``FastFlow: Unsupervised Anomaly Detection and Localization via 2D Normalizing Flows,'' \textit{arXiv:2111.07677}, 2021.
+\bibitem{deng2022anomaly} H. Deng and X. Li, ``Anomaly Detection via Reverse Distillation from One-Class Embedding,'' in \textit{Proc. IEEE/CVF CVPR}, pp. 9737--9746, 2022.
+\end{thebibliography}
+
+\end{document}
