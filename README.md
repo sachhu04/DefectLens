@@ -154,4 +154,4 @@ The architecture supports turning on/off specific criteria (`use_sim`, `use_info
 
 ## 18. Citation
 Based heavily on the concepts from:
-*Multi-criteria Token Fusion with One-step-ahead Attention for Efficient Vision Transformers*
+*Multi-criteria Token Fusion with One-step-ahead Attention for Efficient Vision Transformers - CVPR 2024*
